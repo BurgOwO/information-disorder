@@ -1,0 +1,194 @@
+\documentclass[12pt]{article}
+\usepackage{imakeidx} % Per creare un vero indice
+\usepackage[italian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{pifont}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{eso-pic}
+\usepackage{enumitem}
+% Per gestire meglio la pagina
+\usepackage{wallpaper}
+\usepackage{graphicx} % Importa il pacchetto graphicx per l'inserimento di immagini
+
+%% Additional packages and commands
+\usepackage{parskip}
+\setlist{itemsep=-2pt} % Reducing white space in lists slightly
+\renewcommand{\deg}{\si{\degree}\xspace} % Use \deg easily, everywhere
+
+% Colore setting
+\definecolor{deepblue}{RGB}{0,20,60}
+
+\makeindex % Attiva la creazione dell'indice
+\begin{document}
+	
+	% Impostazione della numerazione delle pagine
+	\pagenumbering{arabic}  % Imposta la numerazione delle pagine in numeri arabi
+	
+	% La numerazione inizia dalla prima pagina
+	\pagestyle{empty}  % Imposta lo stile della pagina con la numerazione (senza intestazione)
+	
+	\begin{titlepage}
+		% Inserisce l'immagine di sfondo
+		\begin{tikzpicture}[remember picture,overlay]
+			% Immagine di sfondo ridimensionata
+			\node[inner sep=0pt] at (current page.center){
+				\includegraphics[width=\paperwidth,height=\paperheight]{immagini/copertina2}
+			};
+			
+			% Overlay colorato
+			\fill[color=deepblue,opacity=0.8.5] 
+			(current page.north west) -- 
+			(current page.north east) -- 
+			(current page.south east) -- 
+			(current page.south west) -- 
+			cycle;
+		\end{tikzpicture}
+		% Contenuto sovrapposto all'immagine
+		\centering
+		\vspace*{2cm}
+		
+		{\large\color{white}Dipartimento di Scienze Aziendali - Management \& Innovation Systems\\
+			Corso di Laurea in Data Science \& Gestione dell'Innovazione\par}
+		\vspace{0.8cm}
+		
+		{\Huge\color{white}\textbf{ Il Gabibbo: una figura controversa}\par}
+		\vspace{1cm}
+		
+		{\Large\color{white} Come il Gabibbo ha creato un esercito di neofascisti nell'Italia del 21esimo secolo\par}
+		\vspace{1.5cm}
+		
+		{\large\color{white}INFORMATION DISORDER AND GLOBAL SECURITY\par}
+		\vspace{0.5cm}
+		
+		\vfill
+		
+	\end{titlepage}
+	\newpage
+	% Creazione della copertina
+	\begin{titlepage}
+		\centering
+		\vspace*{1cm}
+		
+		% Titolo del report
+		{\Huge \textbf{Echoes of the right: La genesi delle community altright su Telegram}}\\
+		\vspace{0.5cm}
+		{\LARGE Come i network digitali hanno forgiato l'altright su Telegram}\\
+		\vspace{1.5cm}
+		
+		% Autore
+		\textbf{by}\\
+		\vspace{0.5cm}
+		{\Large Denise Brancaccio - MAT. 0222800163}\\
+		{\Large Lucia Brando - MAT. 0222800162}\\
+		{\Large Bruno Maria Di Maio - MAT. 0222800149}
+		\vspace{0.5cm}
+		
+		\vfill
+		
+		% Informazioni aggiuntive
+		\textbf{Instructor:} G. Fenza \\
+		\textbf{Teaching Assistant:} D. Cavaliere \\
+		\textbf{Project Duration:} Month, Year -- Month, Year \\
+		\textbf{Faculty:} Data Science \& Gestione dell'Innovazione \\
+		\vspace{1cm}
+		
+		% Logo
+		\includegraphics[width=0.3\textwidth]{immagini/logodisamis}\\
+		\vspace{0.5cm}
+		\vspace*{1cm}
+	\end{titlepage}
+	\newpage
+	\pagestyle{plain}
+	% Titolo della prefazione
+	\begin{center}
+		{\Large \begin{flushright}
+				\textbf{Prefazione}
+		\end{flushright}} % Titolo grande e in grassetto
+	\end{center}
+	
+	\vspace{0.5cm} % Spazio verticale tra il titolo e il contenuto
+	
+	% Testo della prefazione
+	\hspace{0.5cm} % Indentazione da sinistra
+	\begin{flushleft}
+		\textit{Il mondo delle community online ha assunto un ruolo sempre più centrale nella formazione delle opinioni, nella condivisione di informazioni e nella costruzione di identità collettive. \\Con la crescente diffusione di notizie false e la polarizzazione delle opinioni, è cruciale comprendere le dinamiche di queste community e il loro rapporto con la qualità delle fonti informative. \\Questo lavoro si propone di esplorare il livello di apertura delle community su Telegram e il legame tra tale apertura e l'attendibilità dei siti di notizie condivisi al loro interno. \\L'obiettivo è non solo mappare le connessioni tra le community e le fonti, ma anche fornire uno strumento di analisi visiva che evidenzi le dinamiche di interazione attraverso l'utilizzo di grafi generati con Gephi. \\Questo studio si inserisce in un contesto di ricerca multidisciplinare che combina data science, analisi delle reti sociali e valutazione delle fonti informative, offrendo nuove prospettive sulla comprensione dell'ecosistema informativo digitale.}
+	\end{flushleft} % Testo in corsivo
+	\vspace{0.5cm}
+	
+	
+	\newpage
+	\pagestyle{empty} % Disabilita numerazione e intestazioni
+	\vspace*{\fill} % Riempie la pagina senza contenuti
+	\thispagestyle{empty} % Assicura che anche questa pagina sia senza intestazione
+	
+	\newpage
+	\renewcommand{\contentsname}{Indice} % Rinomina la tabella dei contenuti
+	\tableofcontents % Genera la tabella dei contenuti
+	\clearpage
+	\section{Introduzione}
+	\pagestyle{plain}
+	\index{Introduzione}
+	Negli ultimi anni, la diffusione di informazioni sui social media e sulle piattaforme di messaggistica istantanea ha radicalmente trasformato il modo in cui le persone accedono alle notizie.\\ 
+	\textbf{Telegram}, in particolare, è emerso come uno degli strumenti più utilizzati per la condivisione di contenuti informativi, grazie alla sua flessibilità e alla capacità di ospitare gruppi e canali con migliaia di membri. Tuttavia, questa libertà d'uso si accompagna a rischi significativi, tra cui la proliferazione di notizie false e l'amplificazione di narrazioni manipolatorie.
+	\\
+	Le \textbf{community online} rappresentano un microcosmo di dinamiche sociali e informative, dove l'apertura – intesa come la capacità di interagire con fonti e utenti esterni – gioca un ruolo cruciale nel determinare la qualità e l'affidabilità delle informazioni condivise.\\ \textit{\textbf{Questo studio si propone di investigare il rapporto tra il livello di apertura delle community e l'attendibilità delle fonti giornalistiche che vi circolano, offrendo una panoramica approfondita delle interazioni tra utenti, contenuti e fonti informative}}.
+	\subsection{Obiettivo principale}
+	L'obiettivo principale di questo lavoro è analizzare il livello di apertura delle community presenti su Telegram e correlare tale apertura all'affidabilità dei siti di notizie condivisi.\\ Attraverso l'utilizzo di dati raccolti direttamente da \textbf{Telegram}, incrociati con valutazioni fornite da \textbf{NewsGuard}, si mira a costruire un grafo rappresentativo delle connessioni e delle interazioni tra community e fonti informative.\\
+	Il grafo, realizzato tramite \textbf{Gephi}, consente una visualizzazione chiara e intuitiva delle dinamiche emerse, facilitando l'identificazione di pattern significativi e relazioni critiche.
+	\newpage
+	\section{Metodi e strumenti di lavoro}
+	Per condurre l'analisi, è stato sviluppato uno \textbf{script Python} progettato per raccogliere dati da Telegram. 
+	\\Questo script ha permesso di filtrare i messaggi contenenti link a siti di notizie. \\I dati raccolti sono stati elaborati confrontandoli con i punteggi di \textbf{NewsGuard}, generando così un file .csv che includeva nodi (le community) e archi (le connessioni tra essi). \\Il file è stato poi importato in \textbf{Gephi} per creare un grafo che rappresentasse visivamente le dinamiche informative.
+	\subsection{Glossario}
+		Per facilitare tale ricerca, è stato stilato un dizionario di termini:
+	\begin{itemize}[label=\ding{109}] 
+		\item papere
+		\item gabibbo
+	\end{itemize}
+	\subsection{Telegram}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\textwidth]{immagini/telegram}
+	\end{figure}
+	Telegram è una piattaforma di messaggistica molto utilizzata per la creazione di gruppi e canali tematici in cui gli utenti possono condividere e discutere contenuti.\\
+	A differenza di altre piattaforme, Telegram permette la creazione di canali pubblici e gruppi con un numero potenzialmente illimitato di membri, favorendo una rapida diffusione delle informazioni. \\L'architettura di Telegram, infatti, consente agli utenti di condividere link a siti web, creando un ecosistema in cui notizie, articoli e contenuti virali possono diffondersi rapidamente. \\Questo lo rende un campo di studio ideale per analizzare la diffusione delle notizie, soprattutto in relazione alla qualità delle informazioni condivise. \\Inoltre, la disponibilità di API permette di raccogliere dati in modo automatizzato e strutturato, semplificando l'analisi dei messaggi e dei contenuti condivisi all'interno dei gruppi e canali. \\\textit{Per il nostro studio, Telegram è stato scelto come piattaforma principale per monitorare e raccogliere i dati, in quanto fornisce un ampio spettro di community diverse e informazioni su un vasto numero di argomenti, spesso trattati in modo non filtrato e senza verifica.}
+	\subsection{NewsGuard}
+	\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth]{immagini/newsguard}
+	\end{figure}
+	NewsGuard è uno strumento che fornisce valutazioni affidabili sui siti web di notizie, assegnando loro un punteggio in base a criteri come la trasparenza, la correttezza e l'imparzialità dei contenuti. \\Ogni sito analizzato viene esaminato da un team di giornalisti professionisti, che valuta i parametri di qualità delle notizie pubblicate e fornisce una valutazione che aiuta gli utenti a discernere tra fonti affidabili e quelle che potrebbero diffondere disinformazione.\\ L'integrazione di NewsGuard nel nostro studio è stata essenziale, in quanto ha permesso di incrociare i link raccolti da Telegram con una valutazione professionale e oggettiva della loro affidabilità. \\
+	\textit{Grazie a questo strumento, è stato possibile determinare se le fonti di notizie condivise all'interno delle community fossero credibili o se provenissero da siti tendenti alla disinformazione. \\L'utilizzo di NewsGuard ha aggiunto un ulteriore livello di analisi alla nostra ricerca, consentendo di classificare i dati in modo oggettivo e basato su criteri di qualità giornalistica.}
+	\subsection{Gephi}
+		\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\textwidth]{immagini/gephilogo}
+	\end{figure}
+	Gephi è un software open-source utilizzato per l'analisi e la visualizzazione di grafi e reti complesse. \\È particolarmente utile per studiare le relazioni tra entità attraverso la rappresentazione visiva di nodi e archi, dove ogni nodo rappresenta un'entità (in questo caso, una community), mentre gli archi rappresentano le connessioni tra di esse. \\In questo studio, Gephi è stato utilizzato per visualizzare le connessioni tra i diversi nodi, permettendo una rappresentazione grafica che mostra la struttura e l'interconnessione di queste reti. \\L'importazione dei dati raccolti e strutturati in formato CSV ha consentito di generare un grafo interattivo che rende facilmente visibili le relazioni tra le community e le fonti di notizie, offrendo al contempo una panoramica immediata delle dinamiche di diffusione delle informazioni.\\ 
+	\textit{Grazie alla sua capacità di gestire grandi quantità di dati e generare visualizzazioni dinamiche e interattive, Gephi ha svolto un ruolo cruciale nell'interpretazione e nella presentazione dei risultati, consentendo di osservare pattern, cluster e altre caratteristiche significative nelle connessioni tra le community e i siti di notizie.}
+	\newpage
+	\section{Sviluppo del lavoro}
+	Il presente lavoro è articolato in diverse sezioni che riflettono il percorso di analisi intrapreso.\\
+	Il seguente capitolo descriverà in dettaglio la metodologia adottata, illustrando le tecniche di raccolta, filtraggio e analisi dei dati.\\
+	Il successivo capitolo presenterà i risultati ottenuti, con particolare attenzione alla mappatura delle community e alla visualizzazione dei grafi.\\
+	Infine, verranno discussi i risultati evidenziando le implicazioni pratiche e teoriche, oltre a considerare i limiti dello studio e le potenziali direzioni future.
+	\subsection{Raccolta e pre-analisi dei dati}
+	\subsection{Analisi dei grafi}
+	\subsubsection{Creazione dei grafi}
+	\subsubsection{Studio dei cammini all'interno delle reti}
+	\subsubsection{Analisi dei risultati}
+	\subsection{Clusterizzazione}
+	\subsubsection{Clusterizzazione dei coefficienti ed interpretazione}
+	\subsubsection{Visualizzazione keyword attraverso wordcloud}
+	\section{Conclusione e valutazione finale del team}
+	\subsection{Sintesi dei risultati}
+	
+	
+\end{document}
