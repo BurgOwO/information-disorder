@@ -16,6 +16,11 @@
 % Per gestire meglio la pagina
 \usepackage{wallpaper}
 \usepackage{graphicx} % Importa il pacchetto graphicx per l'inserimento di immagini
+\usepackage{listings}
+\usepackage[table]{xcolor}
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.5} % Un blu scuro
+\usepackage{colortbl}
+\usepackage{xcolor}
 
 %% Additional packages and commands
 \usepackage{parskip}
@@ -180,6 +185,73 @@
 	Il successivo capitolo presenterà i risultati ottenuti, con particolare attenzione alla mappatura delle community e alla visualizzazione dei grafi.\\
 	Infine, verranno discussi i risultati evidenziando le implicazioni pratiche e teoriche, oltre a considerare i limiti dello studio e le potenziali direzioni future.
 	\subsection{Raccolta e pre-analisi dei dati}
+	La raccolta e la preparazione dei dati costituiscono la base fondamentale di questo studio, che mira ad analizzare il comportamento delle community su Telegram.\\
+	In questa fase, è stata utilizzata una combinazione di strumenti di programmazione e dataset per strutturare le informazioni raccolte, filtrare i dati rilevanti e prepararli per l'analisi dei grafi.
+	\subsubsection{Raccolta dei dati}
+	La raccolta dei dati è stata effettuata attraverso uno script Python che permette di ottenere un file.csv contenente informazioni sui messaggi scambiati su Telegram, ponendo attenzione solamente su quelli che contenevano un link ad un sito di notizie.\\
+	I dati includono dettagli sui canali, gli utenti e le interazioni effettuate da essi.\\
+	Lo script ha esaminato ogni messaggio nel dataset identificando e memorizzando:
+	\begin{itemize}[label=\ding{109}] 
+		\item gli \textbf{ID univoci} degli utenti che hanno interagito con i canali
+		\item I \textbf{canali} con cui gli utenti hanno avuto interazioni, rappresentando queste informazioni come nodi nel grafo finale.
+	\end{itemize}
+	L'estrazione è stata effettuata utilizzando la \textbf{libreria pandas} per leggere e manipolare i dati del csv, insieme alla \textbf{libreria ast} per convertire stringhe rappresentanti strutture JSON in oggetti Python utilizzabili.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.1\textwidth]{immagini/code1}
+	\end{figure}
+	\subsubsection{Pre-analisi dei dati}
+	Una volta raccolte le informazioni, si è passati alla scrittura dei dati in due file.csv distinti:
+	\begin{itemize}[label=\ding{109}] 
+		\item \textbf{nodes.csv:} contiene l'elenco di nodi della rete, dove i nodi possono essere utenti o canali.
+		\item \textbf{archs.csv:} descrive gli archi della rete, rappresentando le interazioni tra utenti e canali.
+	\end{itemize}
+	\subsubsection{Esempio di righe da includere nella documentazione del file node.csv:}
+	\begin{tabular}{|p{6cm}|p{8cm}|}
+		\hline
+		\cellcolor{darkblue}\textcolor{white}{\textbf{ID}} & \cellcolor{darkblue}\textcolor{white}{\textbf{Type}} \\
+		\hline
+		\textbf{12345678} & User \\
+		\hline
+		\textbf{channel\_1} & Channel\\
+		\hline
+	\end{tabular}
+	\subsubsection{Esempio di righe da includere nella documentazione del file archs.csv:}
+	\begin{tabular}{|p{5cm}|p{4cm}|p{4cm}|}
+		\hline
+		\cellcolor{darkblue}\textcolor{white}{\textbf{Source}} & 
+		\cellcolor{darkblue}\textcolor{white}{\textbf{Target}} & 
+		\cellcolor{darkblue}\textcolor{white}{\textbf{Another Target}} \\
+		\hline
+		\textbf{12345678} & channel\_1 & Reply \\
+		\hline
+	\end{tabular}
+	\subsubsection{Strutturazione dei file per Gephi}
+	La preparazione dei dati per l'importazione in Gephi è un passaggio fondamentale.\\
+	Lo script genera un dataset che rispetta la struttura richiesta per l'analisi grafica.
+	\begin{itemize}[label=\ding{109}] 
+		\item \textbf{File dei nodi:} specifica il tipo di ogni entità (utente o canale).
+		\item \textbf{File degli archi:} specifica la relazione tra i nodi (ad esempio, un utente che risponde a un canale).
+	\end{itemize}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.1\textwidth]{immagini/node}
+		\caption{Codice per la scrittura dei nodi in CSV}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.1\textwidth]{immagini/archi}
+		\caption{Codice per la scrittura degli archi in CSV}
+	\end{figure}
+	\subsubsection{Valutazione dei dati}
+	La raccolta e la preparazione dei dati hanno prodotto un dataset che rappresenta le interazioni tra utenti e canali su Telegram. \\Questi dati sono pronti per essere importati in Gephi, dove verranno analizzati e visualizzati sotto forma di grafo.
+	\\
+	Gli step successivi comprendono:
+	\begin{itemize}[label=\ding{109}] 
+		\item L'importazione dei file nodes.csv e archs.csv in Gephi.
+		\item La visualizzazione e l'interpretazione delle relazioni all'interno del grafo.
+		\item L'identificazione di pattern significativi e cluster di interazioni.
+	\end{itemize}
 	\subsection{Analisi dei grafi}
 	\subsubsection{Creazione dei grafi}
 	\subsubsection{Studio dei cammini all'interno delle reti}
