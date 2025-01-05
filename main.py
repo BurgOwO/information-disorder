@@ -31,6 +31,9 @@ def process_csvs(output_filename, occorrenze_filename, newsguard_filename="Newsg
     # Dizionario per mantenere la capitalizzazione originale dei domini
     original_domains = {domain.lower(): domain for domain in newsguard_df["Domain"] 
                        if isinstance(domain, str)}
+    # Mappa gli score per i domini
+    domain_scores = {domain.lower(): score for domain, score in zip(newsguard_df["Domain"], newsguard_df["Score"])
+                    if isinstance(domain, str)}
     newsguard_domains = set(original_domains.keys())
     
     # Colonne da mantenere nell'output
@@ -48,9 +51,9 @@ def process_csvs(output_filename, occorrenze_filename, newsguard_filename="Newsg
         if filename.endswith(".csv"):
             print("Elaborazione file: %s" % filename)
             try:
-                df = pd.read_csv(os.path.join(folder_path, filename))
+                df = pd.read_csv(os.path.join(folder_path, filename), low_memory=False)
                 
-                for index, row in df.iterrows():
+                for _, row in df.iterrows():
                     if isinstance(row["message"], str):
                         urls = extract_urls(row["message"])
                         domains = {extract_domain(url) for url in urls}
@@ -86,6 +89,7 @@ def process_csvs(output_filename, occorrenze_filename, newsguard_filename="Newsg
         if stats["occorrenze"] > 0:  # Include solo domini con almeno un'occorrenza
             occorrenze_data.append({
                 "Domain": original_domains[domain_lower],  # Usa la capitalizzazione originale
+                "Score": domain_scores[domain_lower],  # Aggiunge lo Score di Newsguard
                 "Occorrenze": stats["occorrenze"],
                 "Views": stats["views"],
                 "Forwards": stats["forwards"]
