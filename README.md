@@ -2,7 +2,7 @@
 **_Analisi dell'Apertura e della Credibilità delle Fonti di Notizie_**  
 
 ### 🌍 Information Disorder e Global Security  
-Un progetto sviluppato per il corso di Information Disorder e Global Security, con la supervisione del professor G. Fenza e l'aiuto del professor D. Cavaliere.
+Un progetto sviluppato per il corso di Information Disorder e Global Security, con la supervisione del professor G. Fenza.
 
 ---
 
