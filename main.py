@@ -26,7 +26,7 @@ def extract_domain(url):
 
 def process_csvs(output_filename, occorrenze_filename, newsguard_filename="Newsguard.csv", folder_path="csv"):
     # Carica il file Newsguard
-    newsguard_df = pd.read_csv(newsguard_filename)
+    newsguard_df = pd.read_csv(newsguard_filename).dropna(subset=["Score"]).drop_duplicates()
     
     # Dizionario per mantenere la capitalizzazione originale dei domini
     original_domains = {domain.lower(): domain for domain in newsguard_df["Domain"] 
@@ -51,7 +51,7 @@ def process_csvs(output_filename, occorrenze_filename, newsguard_filename="Newsg
         if filename.endswith(".csv"):
             print("Elaborazione file: %s" % filename)
             try:
-                df = pd.read_csv(os.path.join(folder_path, filename), low_memory=False)
+                df = pd.read_csv(os.path.join(folder_path, filename), low_memory=False).drop_duplicates()
                 
                 for _, row in df.iterrows():
                     if isinstance(row["message"], str):
