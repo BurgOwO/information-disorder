@@ -21,6 +21,7 @@
 \definecolor{darkblue}{rgb}{0.0, 0.0, 0.5} % Un blu scuro
 \usepackage{colortbl}
 \usepackage{xcolor}
+\usepackage{listings}
 
 %% Additional packages and commands
 \usepackage{parskip}
@@ -29,6 +30,24 @@
 
 % Colore setting
 \definecolor{deepblue}{RGB}{0,20,60}
+% Definizione di una palette di colori sui toni del blu
+
+
+% Configurazione dello stile per il codice (toni del blu)
+\lstset{
+	language=Python,            % Linguaggio del codice
+	backgroundcolor=\color{blue!5}, % Sfondo leggermente azzurro
+	frame=single,               % Bordo singolo attorno al codice
+	rulecolor=\color{blue},     % Colore del bordo
+	numbers=left,               % Numeri di riga a sinistra
+	numberstyle=\tiny\color{blue!70}, % Stile dei numeri di riga
+	basicstyle=\ttfamily\small, % Stile base del testo (monospace, piccolo)
+	keywordstyle=\color{blue},  % Stile delle parole chiave
+	commentstyle=\color{blue!70}, % Stile dei commenti
+	stringstyle=\color{blue!50},  % Stile delle stringhe
+	breaklines=true,            % Abilita la rottura delle righe lunghe
+	tabsize=4                   % Dimensione dei tab
+}
 
 \makeindex % Attiva la creazione dell'indice
 \begin{document}
@@ -178,6 +197,21 @@
 	\end{figure}
 	Gephi è un software open-source utilizzato per l'analisi e la visualizzazione di grafi e reti complesse. \\È particolarmente utile per studiare le relazioni tra entità attraverso la rappresentazione visiva di nodi e archi, dove ogni nodo rappresenta un'entità (in questo caso, una community), mentre gli archi rappresentano le connessioni tra di esse. \\In questo studio, Gephi è stato utilizzato per visualizzare le connessioni tra i diversi nodi, permettendo una rappresentazione grafica che mostra la struttura e l'interconnessione di queste reti. \\L'importazione dei dati raccolti e strutturati in formato CSV ha consentito di generare un grafo interattivo che rende facilmente visibili le relazioni tra le community e le fonti di notizie, offrendo al contempo una panoramica immediata delle dinamiche di diffusione delle informazioni.\\ 
 	\textit{Grazie alla sua capacità di gestire grandi quantità di dati e generare visualizzazioni dinamiche e interattive, Gephi ha svolto un ruolo cruciale nell'interpretazione e nella presentazione dei risultati, consentendo di osservare pattern, cluster e altre caratteristiche significative nelle connessioni tra le community e i siti di notizie.}
+	\subsection{Open Measures}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.6\textwidth]{immagini/openmeasures}
+	\end{figure}
+	Open Measures è una piattaforma avanzata progettata per supportare l'analisi e il monitoraggio delle interazioni sui social media, con un focus particolare sui contenuti generati dagli utenti.\\
+	La piattaforma offre API flessibili e potenti, che consentono di raccogliere dati strutturati su vasta scala.\\
+	Questi dati includono messaggi, metadati (ad esempio, autore, data e ora), contenuti multimediali, e informazioni sulle relazioni tra utenti o entità.
+	\\
+	Le API di Open Measures sono progettate per essere altamente configurabili, permettendo di personalizzare le query attraverso parametri come parole chiave, intervalli temporali, e piattaforme social specifiche. Ciò consente agli utenti di accedere a dataset precisi e pertinenti per le loro analisi.\\ 
+	Ad esempio, è possibile eseguire ricerche avanzate per identificare discussioni che menzionano URL, frasi chiave o hashtag, oppure per analizzare contenuti pubblicati su piattaforme come Telegram, Twitter o Reddit.
+	\\
+	Grazie alla sua architettura scalabile, Open Measures è particolarmente utile per progetti accademici, aziendali o governativi che richiedono l'analisi di grandi quantità di dati social.\\ 
+	Le sue applicazioni spaziano dal monitoraggio della disinformazione e dell'hate speech, all'analisi dei trend, fino agli studi sull'engagement e sulla polarizzazione delle opinioni.\\ 
+	Inoltre, la possibilità di esportare i dati in formati standard, come CSV, facilita l'integrazione con strumenti di analisi esterni come Python, R o software di visualizzazione come Gephi.
 	\newpage
 	\section{Sviluppo del lavoro}
 	Il presente lavoro è articolato in diverse sezioni che riflettono il percorso di analisi intrapreso.\\
@@ -187,19 +221,53 @@
 	\subsection{Raccolta e pre-analisi dei dati}
 	La raccolta e la preparazione dei dati costituiscono la base fondamentale di questo studio, che mira ad analizzare il comportamento delle community su Telegram.\\
 	In questa fase, è stata utilizzata una combinazione di strumenti di programmazione e dataset per strutturare le informazioni raccolte, filtrare i dati rilevanti e prepararli per l'analisi dei grafi.
+	\subsubsection{Utilizzo di Open Measures}
+	Per questo progetto è risultato fondamentale l'utilizzo dell'API di Open Measures.\\
+	Grazie a quest'ultima, infatti, è stato possibile accedere a grandi quantità di dati strutturati relativi a Telegram, includendo metadati come contenuti dei messaggi, timestamp ed informazioni sugli autori.\\
+	Per configurare il sistema, è necessario:
+	\begin{itemize}[label=\ding{109}] 
+		\item Ottenere un token di autorizzazione (salvato nel file \textbf{open-measures-key.txt}).
+		\item Definire i parametri di ricerca attraverso file JSON (\textbf{parametri/required\_columns.json}, \textbf{parametri/dtypes.json}, e \textbf{parametri/terms.json}), che specificano le colonne richieste, i tipi di dati e i termini di ricerca.
+	\end{itemize}
+	Un esempio di chiamata API con la funzione \textbf{fetch\_results} mostra la struttura del processo di raccolta:
+	\begin{lstlisting}
+		df = fetch_results(
+		term="disinformazione",
+		social="telegram",
+		start_date="2024-01-01",
+		end_date="2024-01-31"
+		)
+		
+	\end{lstlisting}
+	La funzione genera query dinamiche per l’API, suddivide automaticamente gli intervalli temporali in caso di limiti di risultati, e converte le risposte in un DataFrame pandas.\\
+	Per esempio, una query per il termine \textit{“disinformazione”} su Telegram ha restituito dati relativi a messaggi contenenti URL (\textbf{message:http OR message:https}) durante l'intero mese di gennaio 2024.
+	\\
+	Infine, i risultati sono stati salvati in file CSV per ogni termine analizzato, come mostrato nel seguente frammento di codice:
+	\begin{lstlisting}
+		output_file = "csv/telegram_disinformazione_2024.csv"
+		df.to_csv(output_file, index=False)
+	\end{lstlisting}
+	Questa metodologia ha garantito la scalabilità del processo di raccolta e la creazione di una base dati robusta per le successive fasi di analisi.
 	\subsubsection{Raccolta dei dati}
-	La raccolta dei dati è stata effettuata attraverso uno script Python che permette di ottenere un file.csv contenente informazioni sui messaggi scambiati su Telegram, ponendo attenzione solamente su quelli che contenevano un link ad un sito di notizie.\\
+	Lo script Python utilizzato per la raccolta dati permette di ottenere un file.csv contenente informazioni sui messaggi scambiati su Telegram, ponendo attenzione solamente su quelli che contenevano un link ad un sito di notizie.\\
 	I dati includono dettagli sui canali, gli utenti e le interazioni effettuate da essi.\\
 	Lo script ha esaminato ogni messaggio nel dataset identificando e memorizzando:
 	\begin{itemize}[label=\ding{109}] 
 		\item gli \textbf{ID univoci} degli utenti che hanno interagito con i canali
 		\item I \textbf{canali} con cui gli utenti hanno avuto interazioni, rappresentando queste informazioni come nodi nel grafo finale.
 	\end{itemize}
-	L'estrazione è stata effettuata utilizzando la \textbf{libreria pandas} per leggere e manipolare i dati del csv, insieme alla \textbf{libreria ast} per convertire stringhe rappresentanti strutture JSON in oggetti Python utilizzabili.
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=1.1\textwidth]{immagini/code1}
-	\end{figure}
+	\begin{lstlisting}
+		for index, replies in enumerate(df["replies"]):
+			if isistance(replies,str):
+				replies = ast.literal_eval(replies)
+			if isistance(replies,dict) and replies["recent_repliers"]:
+				for user, _ in enumerate(replies["recent_repliers"]):
+					if "user_id" in replies["recent_repliers"][user]:
+						if replies["recent_repliers"][user]["user_id"] not in dizionario:
+							dizionario[replies["recent_repliers"][user]["user_id"]] = ("User",[df["channelusername"][index]])
+						else:
+							dizionario[replies["recent_repliers"][user]["user_id"][1].append(df["channelusername"][index])]
+	\end{lstlisting}
 	\subsubsection{Pre-analisi dei dati}
 	Una volta raccolte le informazioni, si è passati alla scrittura dei dati in due file.csv distinti:
 	\begin{itemize}[label=\ding{109}] 
@@ -226,32 +294,64 @@
 		\textbf{12345678} & channel\_1 & Reply \\
 		\hline
 	\end{tabular}
+	\subsubsection{Verifica d'integrità}
+	La pre-analisi dei dati si concentra sulla verifica della loro integrità e sulla loro trasformazione in formati compatibili con le fasi successive.\\
+	Dopo aver caricato i file CSV, è stata eseguita un'analisi esplorativa per identificare eventuali valori nulli o incongruenze:
+	\begin{lstlisting}
+		df = pd.read_csv("csv/telegram_disinformazione_2024.csv")
+		print(df.info())
+		print(df.describe())
+	\end{lstlisting}
+	Un altro passaggio cruciale è stato la conversione delle colonne in tipi di dati uniformi utilizzando un file JSON contenente i tipi previsti (\textbf{dtypes.json}).\\
+	Questa conversione ha evitato errori nella manipolazione successiva dei dati:
+	\begin{lstlisting}
+		with open("parametri/dtypes.json", "r") as f:
+		dtypes = json.load(f)
+		df = df.astype(dtypes)
+	\end{lstlisting}
+	Infine, le colonne non essenziali sono state eliminate per migliorare l'efficienza del sistema, mantenendo solo quelle richieste, come specificato nel file \textbf{required\_columns.json}.
 	\subsubsection{Strutturazione dei file per Gephi}
-	La preparazione dei dati per l'importazione in Gephi è un passaggio fondamentale.\\
-	Lo script genera un dataset che rispetta la struttura richiesta per l'analisi grafica.
+	Per la visualizzazione dei dati e l'analisi delle reti, i dati raccolti sono stati convertiti in formati compatibili con Gephi.\\
+	Sono stati generati due file CSV:
 	\begin{itemize}[label=\ding{109}] 
 		\item \textbf{File dei nodi:} specifica il tipo di ogni entità (utente o canale).
 		\item \textbf{File degli archi:} specifica la relazione tra i nodi (ad esempio, un utente che risponde a un canale).
 	\end{itemize}
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=1.1\textwidth]{immagini/node}
-		\caption{Codice per la scrittura dei nodi in CSV}
-	\end{figure}
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=1.1\textwidth]{immagini/archi}
-		\caption{Codice per la scrittura degli archi in CSV}
-	\end{figure}
+	Lo script gephi.py ha automatizzato questa trasformazione. 
+	\\Per esempio, i nodi sono stati creati come segue:
+	\begin{lstlisting}
+		with open("nodes.csv", mode="w", newline="", encoding="utf-8") as file:
+		writer = csv.writer(file)
+		writer.writerow(["id", "type"])
+		for user_id, (user_type, channels) in dizionario.items():
+		writer.writerow([user_id, user_type])
+		for channel in channels:
+		writer.writerow([channel, "Channel"])
+	\end{lstlisting}
+	Gli archi, invece, sono stati strutturati per rappresentare la relazione tra utenti e canali:
+	\begin{lstlisting}
+		with open("archs.csv", mode="w", newline="", encoding="utf-8") as file:
+		writer = csv.writer(file)
+		writer.writerow(["source", "target", "type"])
+		for user_id, (_, channels) in dizionario.items():
+		for channel in channels:
+		writer.writerow([user_id, channel, "Reply"])
+	\end{lstlisting}
+	Questa strutturazione ha permesso di importare facilmente i dati in Gephi e analizzarli visivamente.
 	\subsubsection{Valutazione dei dati}
-	La raccolta e la preparazione dei dati hanno prodotto un dataset che rappresenta le interazioni tra utenti e canali su Telegram. \\Questi dati sono pronti per essere importati in Gephi, dove verranno analizzati e visualizzati sotto forma di grafo.
-	\\
-	Gli step successivi comprendono:
-	\begin{itemize}[label=\ding{109}] 
-		\item L'importazione dei file nodes.csv e archs.csv in Gephi.
-		\item La visualizzazione e l'interpretazione delle relazioni all'interno del grafo.
-		\item L'identificazione di pattern significativi e cluster di interazioni.
-	\end{itemize}
+	Una valutazione preliminare dei dati è stata condotta per garantire la loro qualità e idoneità.\\ 
+	Durante questa fase, sono stati utilizzati script per calcolare metriche chiave come la distribuzione delle interazioni per canale e l'identificazione di utenti con un elevato livello di attività:
+	\begin{lstlisting}
+		channel_counts = df["channelusername"].value_counts()
+		print("Distribuzione delle interazioni per canale:\n", channel_counts.head())
+	\end{lstlisting}
+	Sono stati anche identificati utenti connessi a più canali, indicativi di potenziali influencer:
+	\begin{lstlisting}
+		for user_id, (_, channels) in dizionario.items():
+		if len(channels) > 5:
+		print(f"L'utente {user_id} ha interagito con {len(channels)} canali.")
+	\end{lstlisting}
+	Questi risultati sono stati utilizzati per affinare ulteriormente il dataset, eliminando eventuali anomalie e preparando i dati per l'analisi di rete in Gephi.
 	\subsection{Analisi dei grafi}
 	\subsubsection{Creazione dei grafi}
 	\subsubsection{Studio dei cammini all'interno delle reti}
