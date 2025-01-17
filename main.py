@@ -34,6 +34,10 @@ def process_csvs(output_filename, occorrenze_filename, newsguard_filename="Newsg
     # Mappa gli score per i domini
     domain_scores = {domain.lower(): score for domain, score in zip(newsguard_df["Domain"], newsguard_df["Score"])
                     if isinstance(domain, str)}
+    # Mappa gli orientamenti politici per i domini
+    domain_orientations = {domain.lower(): orientation for domain, orientation in zip(newsguard_df["Domain"], newsguard_df["Orientation"])
+                           if isinstance(domain, str)}
+    
     newsguard_domains = set(original_domains.keys())
     
     # Colonne da mantenere nell'output
@@ -88,8 +92,9 @@ def process_csvs(output_filename, occorrenze_filename, newsguard_filename="Newsg
     for domain_lower, stats in domain_stats.items():
         if stats["occorrenze"] > 0:  # Include solo domini con almeno un'occorrenza
             occorrenze_data.append({
-                "Domain": original_domains[domain_lower],  # Usa la capitalizzazione originale
-                "Score": domain_scores[domain_lower],  # Aggiunge lo Score di Newsguard
+                "Domain": original_domains[domain_lower],
+                "Score": domain_scores[domain_lower],
+                "Orientation": domain_orientations[domain_lower],
                 "Occorrenze": stats["occorrenze"],
                 "Views": stats["views"],
                 "Forwards": stats["forwards"]
