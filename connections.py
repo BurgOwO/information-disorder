@@ -5,10 +5,7 @@ from itertools import combinations
 df = pd.read_csv("archs.csv")
 
 # Nome del file di output
-output_file = "archs_new_2.csv"
-
-# Inizializza un DataFrame vuoto
-df_total_users = pd.DataFrame(columns=["source", "target", "type"])
+output_file = "archs_new.csv"
 
 # Inizializza un DataFrame vuoto
 df_total_channels = pd.DataFrame(columns=["source", "target", "type"])
@@ -30,7 +27,7 @@ for _, group in df.groupby("source"):
     df_total_channels = pd.concat([df_total_channels, df_new], ignore_index=True)
 
 # Concatena il DataFrame totale al DataFrame originale
-df_final = pd.concat([df, df_total_users, df_total_channels], ignore_index=True).dropna()
+df_final = pd.concat([df, df_total_channels], ignore_index=True).dropna()
 df_final.to_csv(output_file, index=False)
 
 print("File %s salvato con successo." % output_file)
