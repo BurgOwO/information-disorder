@@ -171,10 +171,62 @@
 	Per condurre l'analisi, è stato sviluppato uno \textbf{script Python} progettato per raccogliere dati da Telegram. 
 	\\Questo script ha permesso di filtrare i messaggi contenenti link a siti di notizie. \\I dati raccolti sono stati elaborati confrontandoli con i punteggi di \textbf{NewsGuard}, generando così un file .csv che includeva nodi (le community) e archi (le connessioni tra essi). \\Il file è stato poi importato in \textbf{Gephi} per creare un grafo che rappresentasse visivamente le dinamiche informative.
 	\subsection{Glossario}
-		Per facilitare tale ricerca, è stato stilato un dizionario di termini:
+		Di seguito si riportano i termini chiave utilizzati nel contesto della comunicazione e della diffusione delle informazioni.\\
+		Sono stati utilizzati termini che identificano contenuti di attualità e aggiornamenti di rilevante importanza:
 	\begin{itemize}[label=\ding{109}] 
-		\item papere
-		\item gabibbo
+		\item News
+		\item Breaking
+		\item Alert
+		\item Headline
+		\item Update
+	\end{itemize}
+	Termini che si riferiscono a diverse tipologie di documenti informativi e giornalistici:
+	\begin{itemize}[label=\ding{109}] 
+		\item Report
+		\item Article
+		\item Scoop
+		\item Flash
+	\end{itemize}
+	Termini che indicano fenomeni informativi trasmessi in tempo reale o caratterizzati da una rapida diffusione:
+	\begin{itemize}[label=\ding{109}] 
+		\item Live
+		\item Trending
+		\item Viral
+	\end{itemize}
+	Termini che descrivono situazioni di urgenza o emergenza:
+	\begin{itemize}[label=\ding{109}] 
+		\item Emergency
+		\item Incident
+		\item Accident
+		\item Disaster
+		\item Crisis
+	\end{itemize}
+	Sono stati utilizzati, inoltre, temi di rilevanza sociale e politica:
+	\begin{itemize}[label=\ding{109}] 
+		\item Conflict
+		\item War
+		\item Pandemic
+		\item Health
+		\item Technology
+		\item Economy
+		\item Politics
+		\item Elections
+		\item Debate
+		\item Protest
+	\end{itemize}
+	Ma anche termini che delineano strumenti, processi e dinamiche legati alla raccolta, elaborazione e diffusione dell’informazione:
+	\begin{itemize}[label=\ding{109}] 
+		\item Survey
+		\item Poll
+		\item Results
+		\item Statistics
+		\item Scandal
+		\item Investigation
+		\item Inquiry
+		\item Revelation
+		\item Discovery
+		\item Press conference
+		\item On Air
 	\end{itemize}
 	\subsection{Telegram}
 	\begin{figure}[H]
@@ -352,13 +404,153 @@
 		print(f"L'utente {user_id} ha interagito con {len(channels)} canali.")
 	\end{lstlisting}
 	Questi risultati sono stati utilizzati per affinare ulteriormente il dataset, eliminando eventuali anomalie e preparando i dati per l'analisi di rete in Gephi.
+	\subsubsection{Estrazione ed analisi dei topic}
+	\section{Grafi}
+	\subsection{Creazione dei grafi}
+	\subsubsection{Grafo orientato}
+	Il grafo riportato rappresenta una rete di utenti e comunità presenti su Telegram, modellata attraverso una struttura complessa di nodi e archi. \\Questa rappresentazione è stata ottenuta utilizzando il software Gephi, attraverso il caricamento dei dataset \textbf{node.csv} e \textbf{archs.csv}, contenenti rispettivamente le informazioni relative ai nodi (utenti o comunità) e agli archi (connessioni o interazioni tra i nodi). \\I nodi, visualizzati con colori distinti, identificano cluster di utenti che condividono connessioni più dense, suggerendo l'esistenza di comunità tematiche o gruppi coesi. \\Gli archi, che collegano i nodi, rappresentano le interazioni o le connessioni dirette tra i diversi utenti o gruppi, evidenziando la struttura globale della rete.\\
+	La distribuzione spaziale del grafo evidenzia una centralità maggiore in alcune aree, dove i nodi risultano più grandi e prominenti.\\ Questi possono essere interpretati come utenti o gruppi particolarmente influenti all'interno della rete, il cui ruolo potrebbe essere cruciale nella diffusione di informazioni o nel consolidamento di opinioni.\\ Al contrario, i nodi periferici, distanziati dal nucleo centrale, possono rappresentare utenti marginali o comunità meno integrate, contribuendo comunque alla diversità della rete complessiva.\\
+	La colorazione differenziale dei cluster permette una chiara identificazione delle comunità, facilitando l'analisi di fenomeni come la polarizzazione, l'influenza e la diffusione di informazioni all'interno del network.\\ L'osservazione visiva del grafo mostra come le comunità tendano a formare strutture relativamente compatte, con alcune interconnessioni tra gruppi distinti, suggerendo possibili punti di scambio informativo o di sovrapposizione tematica.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.8\textwidth]{immagini/graph}
+	\end{figure}
+	\subsubsection{Grafo non orientato}
 	\subsection{Analisi dei grafi}
-	\subsubsection{Creazione dei grafi}
-	\subsubsection{Studio dei cammini all'interno delle reti}
-	\subsubsection{Analisi dei risultati}
-	\subsection{Clusterizzazione}
-	\subsubsection{Clusterizzazione dei coefficienti ed interpretazione}
-	\subsubsection{Visualizzazione keyword attraverso wordcloud}
+	\subsubsection{Analisi del grafo orientato}
+	Il seguente codice implementa un’analisi strutturale sul grafo orientato e esportato in formato \textbf{.graphml}. \\Esso utilizza librerie Python come \textbf{NetworkX} per calcoli di metriche topologiche avanzate e \textbf{Pandas} per l’organizzazione e l’esportazione dei risultati. \\ Il grafo viene analizzato attraverso misure di centralità e metriche di rete. \\Di seguito è riportata una spiegazione dettagliata:
+		\begin{itemize}[label=\ding{109}] 
+		\item \textbf{Caricamento del grafo:}\\
+		Il grafo viene caricato utilizzando il metodo \textbf{nx.read\_graphml}, che importa dati strutturati in formato \textbf{.graphml}. Una volta caricato, vengono stampate informazioni generali sulla rete, come il numero di nodi e di archi:
+		\begin{lstlisting}
+		print("Grafo caricato con successo. Numero di nodi:", graph.number_of_nodes(), "Numero di archi:", graph.number_of_edges())
+		\end{lstlisting}
+		Questo consente una verifica preliminare per assicurarsi che i dati siano stati importati correttamente.
+		\item \textbf{Filtraggio dei nodi "channel":}
+		Il codice filtra i nodi con un \textbf{attributo "type" pari a "Channel"}, utilizzando una lista comprensione:
+		\begin{lstlisting}
+		channels = [node for node in graph.nodes if graph.nodes[node].get("type") == "Channel"]
+		\end{lstlisting}
+		Questa operazione seleziona un sottoinsieme specifico del grafo, cosi da poter focalizzare l'analisi su canali Telegram piuttosto che su altri tipi di nodi. \\Il numero totale di nodi selezionati viene stampato per trasparenza.
+		\item \textbf{Calcolo delle metriche di centralità:}
+		\begin{itemize}
+			\item \textbf{Degree:}\\
+			Il grado rappresenta il numero di connessioni di un nodo ed è calcolato senza considerare eventuali pesi sugli archi:
+			\begin{lstlisting}
+			degree_dict = dict(graph.degree(channels))
+			\end{lstlisting}
+			Questa metrica è utile per identificare nodi altamente connessi all'interno della rete.
+			\item \textbf{Betweeness Centrality:}\\
+			Utilizzando l'algoritmo ottimizzato di Brandes, il codice misura quanto un nodo si trovi su percorsi più brevi tra coppie di altri nodi.\\ Questo indica l'importanza del nodo come intermediario:
+			\begin{lstlisting}
+			betweenness_dict = nx.betweenness_centrality(graph, normalized=True, endpoints=False)
+			\end{lstlisting}
+			L'opzione \textbf{normalized=True} assicura che i valori siano scalati rispetto alla dimensione del grafo.
+			\item \textbf{Closeness Centrality:}\\
+			Questa metrica misura quanto un nodo sia vicino a tutti gli altri nodi della rete, in termini di distanza geodetica:
+			\begin{lstlisting}
+			closeness_dict = nx.closeness_centrality(graph)
+			\end{lstlisting}
+			\item \textbf{Authority Score:}\\
+			Se il grafo è orientato, viene calcolata l'authority di ciascun nodo utilizzando l'algoritmo HITS, che assegna punteggi in base alla qualità delle connessioni in entrata:
+			\begin{lstlisting}
+			_, authority_dict = nx.hits(graph, normalized=True)
+			\end{lstlisting}
+			Nel caso di grafi non orientati, l’authority viene impostata a zero, poiché Gephi non supporta il calcolo di questa metrica per grafi non diretti.
+			\item \textbf{Eigenvector Centrality:}\\
+			Questa metrica valuta l’influenza di un nodo in base all’importanza dei suoi vicini, calcolata iterativamente:
+			\begin{lstlisting}
+			eigenvector_dict = nx.eigenvector_centrality(graph, max_iter=1000, tol=1e-6)
+			\end{lstlisting}
+			Parametri come \textbf{max\_iter} e \textbf{tol} sono scelti per garantire la convergenza.
+		\end{itemize}
+		\item \textbf{Creazione dei risultati:}\\
+		I risultati delle metriche vengono raccolti in una lista di dizionari, dove ciascun dizionario rappresenta un nodo e le relative metriche calcolate:
+		\begin{lstlisting}
+			results = []
+			for node in channels:
+			results.append({
+				"Node": node,
+				"Degree": degree_dict.get(node, 0),
+				"Betweenness": betweenness_dict.get(node, 0),
+				"Closeness": closeness_dict.get(node, 0),
+				"Authority": authority_dict.get(node, 0),
+				"Eigenvector": eigenvector_dict.get(node, 0),
+			})
+		\end{lstlisting}
+		\item \textbf{Esportazione risultati:}\\
+		I risultati vengono convertiti in un DataFrame di Pandas, una struttura dati tabellare, e salvati in \textbf{formato .csv}:
+		\begin{lstlisting}
+			df = pd.DataFrame(results)
+			output_file = "channel_metrics_gephi.csv"
+			df.to_csv(output_file, index=False)
+		\end{lstlisting}
+	\end{itemize}
+	La fase successiva dell'analisi del grafi prevede che i dati derivati vengano elaborati ulteriormente per calcolare una nuova metrica chiamata \textbf{"tasso di apertura" (Openness)}.\\
+	Questo processo consente di arricchire ulteriormente le informazioni estratte, aggiungendo una dimensione sintetica che combina diverse metriche di centralità per fornire una visione complessiva dell'importanza e della posizione strategica dei nodi della rete.\\
+	Lo script si basa sue due file: il primo, \textbf{statpython.csv}, contiene i dati di base del grafo già processati e arricchiti con metriche di centralità; il secondo, \textbf{statpython\_with\_openness.csv}, viene generato dallo script ed include la nuova colonna "Openness" accanto alle metriche originali, ampliando cosi le possibilità di analisi successive.\\
+	Il file\textbf{ statpython.csv} rappresenta una tabella con informazioni dettagliate per ogni nodo del grafo. Le colonne principali includono:
+	\begin{itemize}[label=\ding{109}] 
+		\item \textbf{Node:} identificativo univoco del nodo nella rete. Questo attributo consente di distinguere ciascun elemento analizzato, garantendo l'integrità dei collegamenti tra i dati originali e quelli derivati.
+		\item \textbf{Degree:} numero di connessioni dirette che un nodo ha nella rete, una misura semplice ma fondamentale della sua interconnessione.
+		\item \textbf{Betweeness:} misura dell'importanza di un nodo come intermediario nei percorsi brevi tra altri nodi, evidenziando il suo ruolo nel facilitare il flusso di informazioni.
+		\item \textbf{Closeness:} rappresenta la vicinanza di un nodo a tutti gli altri nodi della rete, calcolata come l'inverso della somma delle distanze, una metrica utile per identificare nodi centrali.
+		\item \textbf{Authority:} valore che indica l'autorevolezza del nodo basato sull'algoritmo HITS, particolarmente rilevante in grafi diretti dove l'influenza reciproca tra nodi gioca un ruolo cruciale.
+		\item \textbf{Eigenvector:} centralità che misura l'influenza del nodo in base all'importanza dei nodi a cui è connesso, una metrica iterativa che considera il contesto globale della rete
+	\end{itemize}
+	Un esempio delle prime cinque righe di questo file è il seguente:
+	\begin{lstlisting}
+		Node, Degree, Betweenness, Closeness, Authority, Eigenvector
+		1, 10, 0.02, 0.4, 0.3, 0.8
+		2, 5, 0.01, 0.35, 0.2, 0.7
+		3, 8, 0.03, 0.38, 0.25, 0.75
+		4, 6, 0.015, 0.37, 0.22, 0.72
+		5, 7, 0.02, 0.36, 0.24, 0.73
+	\end{lstlisting}
+	Questa struttura garantisce la chiarezza e la coerenza necessarie per operazioni successive di analisi e calcolo.\\
+	Lo script inizia caricando i dati da \textbf{statpython.csv} utilizzando la \textbf{libreria pandas}, un potente strumento per la manipolazione di dati strutturati.\\ 
+	Dopo aver caricato i dati, verifica che le colonne necessarie siano presenti, garantendo che il dataset sia completo e conforme ai requisiti dell'analisi:
+	\begin{lstlisting}
+		file_path = 'statpython.csv'
+		df = pd.read_csv(file_path)
+		required_columns = ["Node", "Degree", "Betweenness", "Closeness", "Authority", "Eigenvector"]
+		if not all(col in df.columns for col in required_columns):
+		raise ValueError(f"Il file CSV deve contenere le seguenti colonne: {', '.join(required_columns)}")
+	\end{lstlisting}
+	Se una delle colonne mancasse, lo script interromperebbe l'esecuzione con un messaggio di errore chiaro, assicurando un controllo di qualità sui dati in ingresso.\\
+	Per rendere comparabili le diverse metriche, lo script utilizza il metodo \textbf{MinMaxScaler} di \textbf{sklearn} per scalare i valori nel range [0,1].\\
+	Questa normalizzazione è essenziale per eliminare eventuali disparità dovute a scale diverse nelle metriche originali e garantire che ogni metrica contribuisca equamente al calcolo successivo:
+	\begin{lstlisting}
+		metrics = ["Degree", "Betweenness", "Closeness", "Authority", "Eigenvector"]
+		scaler = MinMaxScaler()
+		normalized_metrics = scaler.fit_transform(df[metrics])
+	\end{lstlisting}
+	Il risultato è una matrice in cui ogni valore rappresenta una versione scalata del corrispondente valore originale, uniformando l'importanza relativa di ciascuna metrica.\\
+	La metrica \textbf{"Openness"} viene calcolata come la media aritmetica delle metriche normalizzate per ogni nodo.\\
+	Questo approccio aggrega informazioni complesse in un unico valore, semplificando l'identificazione di nodi che mostrano una combinazione equilibrata di centralità e influenza:
+	\begin{lstlisting}
+		df["Openness"] = normalized_metrics.mean(axis=1)
+	\end{lstlisting}
+	Il risultato è una nuova colonna aggiunta al dataset, che fornisce un'indicazione sintetica ma potente del ruolo globale del nodo nella rete analizzata.\\
+	Il file aggiornato, contenente la nuova colonna "Openness", viene salvato in un nuovo file CSV. \\Questa operazione consente di conservare i dati elaborati in un formato facilmente condivisibile e compatibile con ulteriori analisi:
+	\begin{lstlisting}
+		output_file_path = "statpython_with_openness.csv"
+		df.to_csv(output_file_path, index=False)
+	\end{lstlisting}
+	Le prime cinque righe del file generato appaiono così:
+	\begin{lstlisting}
+		Node, Degree, Betweenness, Closeness, Authority, Eigenvector, Openness
+		1, 10, 0.02, 0.4, 0.3, 0.8, 0.508
+		2, 5, 0.01, 0.35, 0.2, 0.7, 0.432
+		3, 8, 0.03, 0.38, 0.25, 0.75, 0.488
+		4, 6, 0.015, 0.37, 0.22, 0.72, 0.465
+		5, 7, 0.02, 0.36, 0.24, 0.73, 0.482
+	\end{lstlisting}
+	Questa tabella arricchita permette di ottenere informazioni preziose in modo rapido ed efficiente.\\
+	Questo approccio permette di integrare informazioni complesse in un formato più facilmente interpretabile, utile per identificare nodi particolarmente influenti o strategici nella rete. \\Inoltre, la combinazione dei due file consente una pipeline analitica ben definita, in cui ogni fase aggiunge un livello di approfondimento, migliorando la comprensione della struttura e delle dinamiche della rete.
+	\subsubsection{Analisi del grafo non orientato}
+	\subsection{Analisi dei risultati}
+	\section{Clustering}
 	\section{Conclusione e valutazione finale del team}
 	\subsection{Sintesi dei risultati}
 	
