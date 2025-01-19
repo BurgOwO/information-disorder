@@ -72,7 +72,7 @@ with open(nodes, mode="w", newline="", encoding="utf-8") as file:
                 target_set.add(element)
                 writer.writerow([element, "Domain"])
 
-print("I dati sono stati salvati in %s con %d occorrenze" % (nodes, len(open("nodes_domain.csv", "r").read())))
+print("I dati sono stati salvati in %s." % nodes)
 
 # Scrittura nel file CSV degli archi
 with open(archs, mode="w", newline="", encoding="utf-8") as file:
@@ -86,4 +86,4 @@ with open(archs, mode="w", newline="", encoding="utf-8") as file:
         for element in target:
             writer.writerow([key, element, "Reply"])
 
-print("I dati sono stati salvati in %s con %d occorrenze" % (archs, len(open("archs_domain.csv", "r").read())))
+print("I dati sono stati salvati in %s." % archs)
