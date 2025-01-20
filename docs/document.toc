@@ -10,23 +10,23 @@
 \contentsline {subsection}{\numberline {2.5}Open Measures}{9}{subsection.2.5}%
 \contentsline {section}{\numberline {3}Sviluppo del lavoro}{10}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Raccolta e pre-analisi dei dati}{10}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}Utilizzo di Open Measures}{10}{subsubsection.3.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.2}Raccolta dei dati}{11}{subsubsection.3.1.2}%
-\contentsline {subsubsection}{\numberline {3.1.3}Pre-analisi dei dati}{11}{subsubsection.3.1.3}%
-\contentsline {subsubsection}{\numberline {3.1.4}Esempio di righe da includere nella documentazione del file node.csv:}{12}{subsubsection.3.1.4}%
-\contentsline {subsubsection}{\numberline {3.1.5}Esempio di righe da includere nella documentazione del file archs.csv:}{12}{subsubsection.3.1.5}%
-\contentsline {subsubsection}{\numberline {3.1.6}Verifica d'integrità}{12}{subsubsection.3.1.6}%
-\contentsline {subsubsection}{\numberline {3.1.7}Strutturazione dei file per Gephi}{12}{subsubsection.3.1.7}%
-\contentsline {subsubsection}{\numberline {3.1.8}Valutazione dei dati}{13}{subsubsection.3.1.8}%
-\contentsline {subsubsection}{\numberline {3.1.9}Estrazione ed analisi dei topic}{14}{subsubsection.3.1.9}%
-\contentsline {section}{\numberline {4}Grafi}{14}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Creazione dei grafi}{14}{subsection.4.1}%
-\contentsline {subsubsection}{\numberline {4.1.1}Grafo orientato}{14}{subsubsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.2}Grafo non orientato}{15}{subsubsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.2}Analisi dei grafi}{15}{subsection.4.2}%
-\contentsline {subsubsection}{\numberline {4.2.1}Analisi del grafo orientato}{15}{subsubsection.4.2.1}%
-\contentsline {subsubsection}{\numberline {4.2.2}Analisi del grafo non orientato}{20}{subsubsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.3}Analisi dei risultati}{20}{subsection.4.3}%
-\contentsline {section}{\numberline {5}Clustering}{20}{section.5}%
-\contentsline {section}{\numberline {6}Conclusione e valutazione finale del team}{20}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Sintesi dei risultati}{20}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}File newsguard.csv}{10}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}File Open Measures.py}{11}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}File main.py}{12}{subsubsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.4}File gephi.py}{15}{subsubsection.3.1.4}%
+\contentsline {subsubsection}{\numberline {3.1.5}File node.csv:}{16}{subsubsection.3.1.5}%
+\contentsline {subsubsection}{\numberline {3.1.6}File archs.csv:}{17}{subsubsection.3.1.6}%
+\contentsline {subsubsection}{\numberline {3.1.7}File connections.py}{17}{subsubsection.3.1.7}%
+\contentsline {subsubsection}{\numberline {3.1.8}File closure.py}{19}{subsubsection.3.1.8}%
+\contentsline {subsubsection}{\numberline {3.1.9}File community.py}{20}{subsubsection.3.1.9}%
+\contentsline {section}{\numberline {4}Grafi}{25}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Creazione dei grafi}{25}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Grafo orientato}{25}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Grafo non orientato}{26}{subsubsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}Analisi dei grafi}{26}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Analisi del grafo orientato}{26}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Analisi del grafo non orientato}{31}{subsubsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.3}Analisi dei risultati}{31}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Clustering}{31}{section.5}%
+\contentsline {section}{\numberline {6}Conclusione e valutazione finale del team}{31}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Sintesi dei risultati}{31}{subsection.6.1}%

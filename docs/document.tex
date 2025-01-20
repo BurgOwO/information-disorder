@@ -171,7 +171,7 @@
 	Per condurre l'analisi, è stato sviluppato uno \textbf{script Python} progettato per raccogliere dati da Telegram. 
 	\\Questo script ha permesso di filtrare i messaggi contenenti link a siti di notizie. \\I dati raccolti sono stati elaborati confrontandoli con i punteggi di \textbf{NewsGuard}, generando così un file .csv che includeva nodi (le community) e archi (le connessioni tra essi). \\Il file è stato poi importato in \textbf{Gephi} per creare un grafo che rappresentasse visivamente le dinamiche informative.
 	\subsection{Glossario}
-		Di seguito si riportano i termini chiave utilizzati nel contesto della comunicazione e della diffusione delle informazioni.\\
+		Di seguito si riportano alcuni dei termini chiave utilizzati nel contesto della comunicazione e della diffusione delle informazioni.\\
 		Sono stati utilizzati termini che identificano contenuti di attualità e aggiornamenti di rilevante importanza:
 	\begin{itemize}[label=\ding{109}] 
 		\item News
@@ -179,6 +179,7 @@
 		\item Alert
 		\item Headline
 		\item Update
+		\item Broadcast
 	\end{itemize}
 	Termini che si riferiscono a diverse tipologie di documenti informativi e giornalistici:
 	\begin{itemize}[label=\ding{109}] 
@@ -186,12 +187,18 @@
 		\item Article
 		\item Scoop
 		\item Flash
+		\item Bulletin
+		\item Interview
 	\end{itemize}
 	Termini che indicano fenomeni informativi trasmessi in tempo reale o caratterizzati da una rapida diffusione:
 	\begin{itemize}[label=\ding{109}] 
 		\item Live
 		\item Trending
 		\item Viral
+		\item Insight
+		\item Timeline
+		\item Profile
+		\item Community
 	\end{itemize}
 	Termini che descrivono situazioni di urgenza o emergenza:
 	\begin{itemize}[label=\ding{109}] 
@@ -273,140 +280,594 @@
 	\subsection{Raccolta e pre-analisi dei dati}
 	La raccolta e la preparazione dei dati costituiscono la base fondamentale di questo studio, che mira ad analizzare il comportamento delle community su Telegram.\\
 	In questa fase, è stata utilizzata una combinazione di strumenti di programmazione e dataset per strutturare le informazioni raccolte, filtrare i dati rilevanti e prepararli per l'analisi dei grafi.
-	\subsubsection{Utilizzo di Open Measures}
+	\subsubsection{File newsguard.csv}
+	Per l'avvio del lavoro è stato utilizzato il file \textbf{"newsguard.csv"}, che contiene dati relativi a fonti di notizie.\\
+	L'unico criterio applicato per filtrare i dati in fase iniziale è stato rappresentato dagli score assegnati alle fonti, variabili su una scala da 0 a 100.\\
+	Questo approccio ha permesso di selezionare le fonti in base al loro punteggio senza ulteriori restrizioni.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.9\textwidth]{immagini/filtro.png}
+	\end{figure}
+	\subsubsection{File Open Measures.py}
 	Per questo progetto è risultato fondamentale l'utilizzo dell'API di Open Measures.\\
 	Grazie a quest'ultima, infatti, è stato possibile accedere a grandi quantità di dati strutturati relativi a Telegram, includendo metadati come contenuti dei messaggi, timestamp ed informazioni sugli autori.\\
 	Per configurare il sistema, è necessario:
 	\begin{itemize}[label=\ding{109}] 
 		\item Ottenere un token di autorizzazione (salvato nel file \textbf{open-measures-key.txt}).
-		\item Definire i parametri di ricerca attraverso file JSON (\textbf{parametri/required\_columns.json}, \textbf{parametri/dtypes.json}, e \textbf{parametri/terms.json}), che specificano le colonne richieste, i tipi di dati e i termini di ricerca.
+		\item Definire i parametri di ricerca attraverso file JSON (\textbf{parametri/terms.json}), che specificano le colonne richieste, i tipi di dati e i termini di ricerca. Ogni termine viene verificato: se è già stato processato, non viene ricercato nuovamente.
 	\end{itemize}
 	Un esempio di chiamata API con la funzione \textbf{fetch\_results} mostra la struttura del processo di raccolta:
 	\begin{lstlisting}
-		df = fetch_results(
-		term="disinformazione",
-		social="telegram",
-		start_date="2024-01-01",
-		end_date="2024-01-31"
-		)
+		def fetch_results(term, social, start_date, end_date, attempt_count=None):
+			if attempt_count is None:
+				attempt_count = {"count": 1}
 		
+			current_attempt = attempt_count["count"]
+		
+			params = {
+				'term': '(message:http OR message:https) AND message:%s' % term,
+				'limit': 10000,
+				'site': social,
+				'since': start_date,
+				'until': end_date,
+				'esquery': 'true'
+			}
 	\end{lstlisting}
 	La funzione genera query dinamiche per l’API, suddivide automaticamente gli intervalli temporali in caso di limiti di risultati, e converte le risposte in un DataFrame pandas.\\
-	Per esempio, una query per il termine \textit{“disinformazione”} su Telegram ha restituito dati relativi a messaggi contenenti URL (\textbf{message:http OR message:https}) durante l'intero mese di gennaio 2024.
-	\\
+	Quando il limite massimo di 10.000 risultati viene superato, l'intervallo temporale della query viene automaticamente suddiviso a metà.\\ Questo processo si ripete ricorsivamente fino a quando ogni intervallo produce meno di 10.000 risultati.
+	\begin{lstlisting}
+		...
+		if len(hits) == 10000:
+		mid_date = pd.Timestamp(start_date) + (pd.Timestamp(end_date) - pd.Timestamp(start_date)) / 2
+		...
+		first_half_df = fetch_results(term, social, start_date, mid_date, attempt_count)
+		second_half_df = fetch_results(term, social, second_half, end_date, attempt_count)
+		...
+		else:
+		df = pd.DataFrame([hit['_source'] for hit in hits])
+		return df
+	\end{lstlisting}
+	Questa funzione suddivide gli intervalli temporali finché i dati non sono gestibili, garantendo una raccolta completa e robusta.\\
 	Infine, i risultati sono stati salvati in file CSV per ogni termine analizzato, come mostrato nel seguente frammento di codice:
 	\begin{lstlisting}
-		output_file = "csv/telegram_disinformazione_2024.csv"
+		output_file = "csv/social_termine_2024.csv"
 		df.to_csv(output_file, index=False)
 	\end{lstlisting}
-	Questa metodologia ha garantito la scalabilità del processo di raccolta e la creazione di una base dati robusta per le successive fasi di analisi.
-	\subsubsection{Raccolta dei dati}
-	Lo script Python utilizzato per la raccolta dati permette di ottenere un file.csv contenente informazioni sui messaggi scambiati su Telegram, ponendo attenzione solamente su quelli che contenevano un link ad un sito di notizie.\\
-	I dati includono dettagli sui canali, gli utenti e le interazioni effettuate da essi.\\
-	Lo script ha esaminato ogni messaggio nel dataset identificando e memorizzando:
-	\begin{itemize}[label=\ding{109}] 
-		\item gli \textbf{ID univoci} degli utenti che hanno interagito con i canali
-		\item I \textbf{canali} con cui gli utenti hanno avuto interazioni, rappresentando queste informazioni come nodi nel grafo finale.
+	Questa metodologia ha garantito la scalabilità del processo di raccolta e la creazione di una base dati robusta per le successive fasi di analisi.\\
+	I file finali generati sono in formato CSV e includono:
+	\begin{itemize}
+		\item \textbf{Colonne strutturate:} metadati come timestamp, contenuto dei messaggi, autori, ecc.
+		\item \textbf{Dati consistenti:} grazie alla conversione automatica dei tipi di dati specificati nel file \textbf{dtypes.json}.
 	\end{itemize}
+	\textbf{\textit{Un termine come "disinformazione", ricercato su Telegram per gennaio 2024, ha prodotto dati relativi a messaggi contenenti URL (message:http OR message:https) e salvati nel file CSV corrispondente. Grazie all'automazione, ogni intervallo temporale è stato gestito in modo autonomo, senza intervento manuale.}}
+	\subsubsection{File main.py}
+	Il sistema presentato analizza messaggi provenienti da Telegram per individuare e filtrare URL che puntano a domini di interesse, forniti da un file di riferimento (Newsguard).\\
+	Il processo include la lettura, il filtraggio e l'aggregazione dei dati in due output principali: \textbf{output.csv}, che raccoglie i messaggi rilevanti, e \textbf{occorrenze.csv}, che riassume statistiche di dominio.\\
+	Gli obiettivi del sistema sono:
+	\begin{itemize}[label=\ding{109}]
+		\item Identificare i domini di interesse nei messaggi di Telegram
+		\item Analizzare quantitativamente il numero di occorrenze, visualizzazioni (views) e inoltri (forwards)
+		\item Generare output strutturati e pronti per analisi successive
+	\end{itemize}
+	Gli URL vengono estratti dai messaggi tramite la funzione \textbf{extract\_urls}, che normalizza i formati non standard (es. \textbf{[DOT] → .}) e identifica gli URL.
 	\begin{lstlisting}
+		def extract_urls(text):
+		url_pattern = r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+"
+		if isinstance(text, str):
+		cleaned_message = re.sub(r"\[(DOT|dot|\.)\]", ".", str(text))
+		cleaned_message = re.sub(r"\](?=\s|$)", "", cleaned_message)
+		return re.findall(url_pattern, cleaned_message)
+		return []
+	\end{lstlisting}
+	I domini vengono estratti dagli URL utilizzando la \textbf{libreria urllib}.parse per separare la parte rilevante.
+	\begin{lstlisting}
+		def extract_domain(url):
+		try:
+		parsed_url = urlparse(url)
+		domain = parsed_url.netloc
+		if domain.startswith("www."):
+		domain = domain[4:]
+		return domain.lower()
+		except:
+		return ""
+	\end{lstlisting}
+	La funzione\textbf{ process\_csvs} analizza i file CSV nella \textbf{directory csv/} e li confronta con i domini di interesse presenti nel file Newsguard.
+	\begin{lstlisting}
+		def process_csvs(output_filename, occorrenze_filename, newsguard_filename="Newsguard.csv", folder_path="csv"):
+		newsguard_df = pd.read_csv(newsguard_filename).dropna(subset=["Score"]).drop_duplicates()
+		
+		original_domains = {domain.lower(): domain for domain in newsguard_df["Domain"] if isinstance(domain, str)}
+		domain_scores = {domain.lower(): score for domain, score in zip(newsguard_df["Domain"], newsguard_df["Score"]) if isinstance(domain, str)}
+		domain_orientations = {domain.lower(): orientation for domain, orientation in zip(newsguard_df["Domain"], newsguard_df["Orientation"]) if isinstance(domain, str)}
+		
+		newsguard_domains = set(original_domains.keys())
+		columns_to_keep = ["message", "channelusername", "reactions", "forwards", "postauthor", "replies", "views"]
+		
+		matching_rows = []
+		domain_stats = defaultdict(lambda: {"occorrenze": 0, "views": 0, "forwards": 0})
+		
+		for filename in os.listdir(folder_path):
+		if filename.endswith(".csv"):
+		print("Elaborazione file: %s" % filename)
+		try:
+		df = pd.read_csv(os.path.join(folder_path, filename), low_memory=False).drop_duplicates()
+		for _, row in df.iterrows():
+		if isinstance(row["message"], str):
+		urls = extract_urls(row["message"])
+		domains = {extract_domain(url) for url in urls}
+		matching_domains = domains & newsguard_domains
+		if matching_domains:
+		matching_rows.append(row[columns_to_keep])
+		views = int(row["views"]) if pd.notna(row["views"]) else 0
+		forwards = int(row["forwards"]) if pd.notna(row["forwards"]) else 0
+		for domain in matching_domains:
+		domain_stats[domain]["occorrenze"] += 1
+		domain_stats[domain]["views"] += views
+		domain_stats[domain]["forwards"] += forwards
+		except Exception as e:
+		print("Errore nel processare %s: %s" % (filename, str(e)))
+		
+		if matching_rows:
+		output_df = pd.DataFrame(matching_rows)
+		output_df.to_csv(output_filename, index=False)
+		print("\nAnalisi completata. File %s creato con %s corrispondenze." % (output_filename, len(output_df)))
+		else:
+		print("\nNessuna corrispondenza trovata.")
+		
+		occorrenze_data = []
+		for domain_lower, stats in domain_stats.items():
+		if stats["occorrenze"] > 0:
+		occorrenze_data.append({
+			"Domain": original_domains[domain_lower],
+			"Score": domain_scores[domain_lower],
+			"Orientation": domain_orientations[domain_lower],
+			"Occorrenze": stats["occorrenze"],
+			"Views": stats["views"],
+			"Forwards": stats["forwards"]
+		})
+		
+		if occorrenze_data:
+		occorrenze_df = pd.DataFrame(occorrenze_data)
+		occorrenze_df = occorrenze_df.sort_values("Occorrenze", ascending=False)
+		occorrenze_df.to_csv(occorrenze_filename, index=False)
+		print("File %s creato con %s domini attivi.\n" % (occorrenze_filename, len(occorrenze_df)))
+		else:
+		print("Nessun dominio con occorrenze trovato.\n")
+	\end{lstlisting}
+	Le tipologie di output che si ottengono sono le seguenti:
+	\begin{itemize}[label=\ding{109}]
+		\item \textbf{output.csv:} Fornisce una visione dettagliata dei messaggi corrispondenti, utile per analisi qualitative e per approfondire il contesto dei domini rilevati.
+		\item \textbf{occorrenze.csv:} Riassume i dati quantitativi, ordinando i domini per numero di occorrenze in ordine decrescente, evidenziando i domini più rilevanti.
+		\begin{table}[h!]
+			\centering
+			\renewcommand{\arraystretch}{1.5}
+			\setlength{\tabcolsep}{12pt}
+			\rowcolors{2}{gray!10}{white}
+			\begin{tabular}{|c|c|c|c|c|c|}
+				\hline
+				\rowcolor{darkblue!80} \textcolor{white}{\textbf{Domain}} & \textcolor{white}{\textbf{Score}} & \textcolor{white}{\textbf{Orientation}} & \textcolor{white}{\textbf{Occorrenze}} & \textcolor{white}{\textbf{Views}} & \textcolor{white}{\textbf{Forwards}} \\ \hline
+				dominio1.com & 60 & Neutral & 120 & 1500 & 300 \\ \hline
+				dominio2.com & 90 & Left   & 75  & 800  & 120 \\ \hline
+				dominio3.com & 40 & Right  & 45  & 500  & 100 \\ \hline
+			\end{tabular}
+		\end{table}
+	\end{itemize}
+	\subsubsection{File gephi.py}
+	Il file gephy.py è uno script che processa i dati presenti nel file output.csv per generare due file output:
+	\begin{itemize}[label=\ding{109}]
+		\item \textbf{nodes.csv:} contiene l'elenco dei nodi ed il loro tipo
+		\item \textbf{archs.csv:} contiene le relazioni tra i nodi
+	\end{itemize}
+	Questi file sono progettati per essere compatibili con Gephi e rappresentano rispettivamente i nodi (utenti e canali) e le relazioni (interazioni) tra di essi.
+	Lo script ha lo scopo di:
+	\begin{itemize}[label=\ding{109}]
+		\item \textbf{Identificare i nodi:} creare un elenco di utenti e canali
+		\item \textbf{Generare le relazioni:} costruire gli archi che rappresentano interazioni, come risposte tra utenti e canali
+		\item \textbf{Salvare i risultati}
+	\end{itemize}
+	Lo script si articola in quattro sezioni principali.\\
+	La prima è la lettura del file \textbf{output.csv}:
+	\begin{lstlisting}
+		# Lettura del file CSV
+		data = pd.read_csv("output.csv")
+		df = pd.DataFrame(data)
+	\end{lstlisting}
+	Per ogni riga del file, lo script analizza la \textbf{colonna replies}, che contiene le informazioni sugli utenti che hanno risposto a un determinato canale.\\
+	Se la colonna \textbf{replies} è un dizionario valido, vengono estratti gli identificatori univoci degli utenti (\textbf{user\_id}) e i canali a cui hanno risposto.\\
+	Questi dati vengono salvati nel dizionario \textbf{dizionario}.
+	\begin{lstlisting}
+		dizionario = {}
+		
 		for index, replies in enumerate(df["replies"]):
-			if isistance(replies,str):
-				replies = ast.literal_eval(replies)
-			if isistance(replies,dict) and replies["recent_repliers"]:
-				for user, _ in enumerate(replies["recent_repliers"]):
-					if "user_id" in replies["recent_repliers"][user]:
-						if replies["recent_repliers"][user]["user_id"] not in dizionario:
-							dizionario[replies["recent_repliers"][user]["user_id"]] = ("User",[df["channelusername"][index]])
-						else:
-							dizionario[replies["recent_repliers"][user]["user_id"][1].append(df["channelusername"][index])]
+		# Converti la stringa in un dizionario
+		if isinstance(replies, str):
+		replies = ast.literal_eval(replies)
+		if isinstance(replies, dict) and replies["recent_repliers"]:
+		for user, _ in enumerate(replies["recent_repliers"]):
+		# Estrai l'ID dell'utente
+		if "user_id" in replies["recent_repliers"][user]:
+		user_id = replies["recent_repliers"][user]["user_id"]
+		channel = df["channelusername"][index]
+		# Aggiungi l'utente e il canale al dizionario
+		if user_id not in dizionario:
+		dizionario[user_id] = ("User", [channel])
+		else:
+		dizionario[user_id][1].append(channel)
 	\end{lstlisting}
-	\subsubsection{Pre-analisi dei dati}
-	Una volta raccolte le informazioni, si è passati alla scrittura dei dati in due file.csv distinti:
-	\begin{itemize}[label=\ding{109}] 
-		\item \textbf{nodes.csv:} contiene l'elenco di nodi della rete, dove i nodi possono essere utenti o canali.
-		\item \textbf{archs.csv:} descrive gli archi della rete, rappresentando le interazioni tra utenti e canali.
-	\end{itemize}
-	\subsubsection{Esempio di righe da includere nella documentazione del file node.csv:}
-	\begin{tabular}{|p{6cm}|p{8cm}|}
-		\hline
-		\cellcolor{darkblue}\textcolor{white}{\textbf{ID}} & \cellcolor{darkblue}\textcolor{white}{\textbf{Type}} \\
-		\hline
-		\textbf{12345678} & User \\
-		\hline
-		\textbf{channel\_1} & Channel\\
-		\hline
-	\end{tabular}
-	\subsubsection{Esempio di righe da includere nella documentazione del file archs.csv:}
-	\begin{tabular}{|p{5cm}|p{4cm}|p{4cm}|}
-		\hline
-		\cellcolor{darkblue}\textcolor{white}{\textbf{Source}} & 
-		\cellcolor{darkblue}\textcolor{white}{\textbf{Target}} & 
-		\cellcolor{darkblue}\textcolor{white}{\textbf{Another Target}} \\
-		\hline
-		\textbf{12345678} & channel\_1 & Reply \\
-		\hline
-	\end{tabular}
-	\subsubsection{Verifica d'integrità}
-	La pre-analisi dei dati si concentra sulla verifica della loro integrità e sulla loro trasformazione in formati compatibili con le fasi successive.\\
-	Dopo aver caricato i file CSV, è stata eseguita un'analisi esplorativa per identificare eventuali valori nulli o incongruenze:
+	I dati elaborati, come già detto in precedenza vengono salvati in due file csv.
+	\subsubsection{File node.csv:}
 	\begin{lstlisting}
-		df = pd.read_csv("csv/telegram_disinformazione_2024.csv")
-		print(df.info())
-		print(df.describe())
-	\end{lstlisting}
-	Un altro passaggio cruciale è stato la conversione delle colonne in tipi di dati uniformi utilizzando un file JSON contenente i tipi previsti (\textbf{dtypes.json}).\\
-	Questa conversione ha evitato errori nella manipolazione successiva dei dati:
-	\begin{lstlisting}
-		with open("parametri/dtypes.json", "r") as f:
-		dtypes = json.load(f)
-		df = df.astype(dtypes)
-	\end{lstlisting}
-	Infine, le colonne non essenziali sono state eliminate per migliorare l'efficienza del sistema, mantenendo solo quelle richieste, come specificato nel file \textbf{required\_columns.json}.
-	\subsubsection{Strutturazione dei file per Gephi}
-	Per la visualizzazione dei dati e l'analisi delle reti, i dati raccolti sono stati convertiti in formati compatibili con Gephi.\\
-	Sono stati generati due file CSV:
-	\begin{itemize}[label=\ding{109}] 
-		\item \textbf{File dei nodi:} specifica il tipo di ogni entità (utente o canale).
-		\item \textbf{File degli archi:} specifica la relazione tra i nodi (ad esempio, un utente che risponde a un canale).
-	\end{itemize}
-	Lo script gephi.py ha automatizzato questa trasformazione. 
-	\\Per esempio, i nodi sono stati creati come segue:
-	\begin{lstlisting}
-		with open("nodes.csv", mode="w", newline="", encoding="utf-8") as file:
+		nodes = "nodes.csv"
+		target_set = set()
+		
+		with open(nodes, mode="w", newline="", encoding="utf-8") as file:
 		writer = csv.writer(file)
-		writer.writerow(["id", "type"])
-		for user_id, (user_type, channels) in dizionario.items():
-		writer.writerow([user_id, user_type])
-		for channel in channels:
-		writer.writerow([channel, "Channel"])
+		writer.writerow(["id", "type"])  # Intestazione
+		
+		for key, (value, target) in dizionario.items():
+		writer.writerow([key, value])  # Nodo utente
+		for element in target:
+		if element not in target_set:
+		target_set.add(element)
+		writer.writerow([element, "Channel"])  # Nodo canale
 	\end{lstlisting}
-	Gli archi, invece, sono stati strutturati per rappresentare la relazione tra utenti e canali:
+	\begin{table}[h!]
+		\centering
+		\renewcommand{\arraystretch}{1.5}
+		\setlength{\tabcolsep}{12pt}
+		\rowcolors{2}{gray!10}{white}
+		\begin{tabular}{|p{6cm}|p{8cm}|}
+			\hline
+			\cellcolor{darkblue}\textcolor{white}{\textbf{ID}} & \cellcolor{darkblue}\textcolor{white}{\textbf{Type}} \\
+			\hline
+			\textbf{12345678} & User \\
+			\hline
+			\textbf{channel\_1} & Channel\\
+			\hline
+		\end{tabular}
+	\end{table}
+	\newpage
+	\subsubsection{File archs.csv:}
 	\begin{lstlisting}
-		with open("archs.csv", mode="w", newline="", encoding="utf-8") as file:
+		archs = "archs.csv"
+		
+		with open(archs, mode="w", newline="", encoding="utf-8") as file:
 		writer = csv.writer(file)
-		writer.writerow(["source", "target", "type"])
-		for user_id, (_, channels) in dizionario.items():
-		for channel in channels:
-		writer.writerow([user_id, channel, "Reply"])
+		writer.writerow(["source", "target", "type"])  # Intestazione
+		
+		for key, (_, target) in dizionario.items():
+		for element in target:
+		writer.writerow([key, element, "Reply"])  # Arco tra utente e canale
 	\end{lstlisting}
-	Questa strutturazione ha permesso di importare facilmente i dati in Gephi e analizzarli visivamente.
-	\subsubsection{Valutazione dei dati}
-	Una valutazione preliminare dei dati è stata condotta per garantire la loro qualità e idoneità.\\ 
-	Durante questa fase, sono stati utilizzati script per calcolare metriche chiave come la distribuzione delle interazioni per canale e l'identificazione di utenti con un elevato livello di attività:
+	\begin{table}[h!]
+		\centering
+		\renewcommand{\arraystretch}{1.5}
+		\setlength{\tabcolsep}{12pt}
+		\rowcolors{2}{gray!10}{white}
+		\begin{tabular}{|p{5cm}|p{4cm}|p{4cm}|}
+			\hline
+			\cellcolor{darkblue}\textcolor{white}{\textbf{Source}} & 
+			\cellcolor{darkblue}\textcolor{white}{\textbf{Target}} & 
+			\cellcolor{darkblue}\textcolor{white}{\textbf{Type}} \\
+			\hline
+			\textbf{12345678} & channel\_1 & Reply \\
+			\hline
+		\end{tabular}
+	\end{table}
+	\subsubsection{File connections.py}
+	Il file \textbf{connections.py} è una componente essenziale del progetto che estende le relazioni presenti nel dataset \textbf{archs.csv}.\\
+	Il suo scopo è generare nuove connessioni tra i nodi basandosi su combinazioni esistenti e consolidare tali relazioni in un uovo file csv denominato \textbf{archs\_new.csv}.\\
+	Lo script esegue le seguenti operazioni:
+	\begin{itemize}[label=\ding{109}]
+		\item \textbf{Caricamento del dataset originale:} utilizza il file archs.csv come input per leggere le connessioni esistenti
+		\item \textbf{Raggruppamento per origine:} per ogni nodo sorgente, individua i nodi destinazione collegati (source->target)
+		\item \textbf{Generazione di combinazioni:} crea tutte le possibili coppie tra i nodi di destinazione collegati a una stessa sorgente
+		\item \textbf{Consolidamento delle connessioni:} concatena le connessioni generate con quelle originali e salva il risultato in \textbf{archs\_new.csv}
+	\end{itemize}
+	La prima parte del codice legge il dataset per manipolare i dati tabulari:
 	\begin{lstlisting}
-		channel_counts = df["channelusername"].value_counts()
-		print("Distribuzione delle interazioni per canale:\n", channel_counts.head())
+		import pandas as pd
+		from itertools import combinations
+		
+		# Leggi il file
+		df = pd.read_csv("archs.csv")
 	\end{lstlisting}
-	Sono stati anche identificati utenti connessi a più canali, indicativi di potenziali influencer:
+	Il file \textbf{archs.csv} contiene le connessioni esistenti, strutturate con colonne \textbf{source, target e type}, dove:
+	\begin{itemize}[label=\ding{109}]
+		\item \textbf{Source:} rappresenta il nodo sorgente
+		\item \textbf{Target:} rappresenta il nodo destinazione
+		\item \textbf{Type:} specifica la natura della relazione
+	\end{itemize}
+	Successivamente, si va ad inizializzare le strutture per le nuove connessioni:
 	\begin{lstlisting}
-		for user_id, (_, channels) in dizionario.items():
-		if len(channels) > 5:
-		print(f"L'utente {user_id} ha interagito con {len(channels)} canali.")
+		# Nome del file di output
+		output_file = "archs_new.csv"
+		
+		# Inizializza un DataFrame vuoto
+		df_total_channels = pd.DataFrame(columns=["source", "target", "type"])
 	\end{lstlisting}
-	Questi risultati sono stati utilizzati per affinare ulteriormente il dataset, eliminando eventuali anomalie e preparando i dati per l'analisi di rete in Gephi.
-	\subsubsection{Estrazione ed analisi dei topic}
+	Lo script raggruppa i dati per source, estraendo per ciascun nodo sorgente l'elenco dei nodi di destinazioni associati.\\
+	Successivamente, utilizza la \textbf{funzione combinations} della \textbf{libreria itertools} per generare tutte le coppie possibili tra questi nodi di destinazione:
+	\begin{lstlisting}
+		for _, group in df.groupby("source"):
+		# Crea un set di utenti per evitare duplicati
+		targets = set(group["target"])
+		
+		# Genera le combinazioni
+		pairs = list(combinations(targets, 2))
+		df_new = pd.DataFrame(pairs, columns=["source", "target"]).drop_duplicates()
+		
+		# Aggiungi la colonna "type" con valore "Connection"
+		df_new["type"] = "Connection"
+		
+		# Concatena al DataFrame totale
+		df_total_channels = pd.concat([df_total_channels, df_new], ignore_index=True)
+	\end{lstlisting}
+	In questo processo i nodi di destinazione vengono memorizzati in un set \textbf{(targets)} per garantire l'unicità e le combinazioni di coppie vengono generate per creare nuove connessioni indirette tra i nodi.\\
+	Le connessioni aggiuntive vengono unite a quelle originali presenti nel dataset:
+	\begin{lstlisting}
+		# Concatena il DataFrame totale al DataFrame originale
+		df_final = pd.concat([df, df_total_channels], ignore_index=True).dropna()
+		df_final.to_csv(output_file, index=False)
+	\end{lstlisting}
+	Il risultato è salvato in un nuovo file \textbf{archs\_new.csv} che contiene sia le connessioni originali sia quelle derivate.
+	\begin{table}
+		\begin{tabular}{|p{5cm}|p{4cm}|p{4cm}|}
+			\hline
+			\cellcolor{darkblue}\textcolor{white}{\textbf{Source}} & 
+			\cellcolor{darkblue}\textcolor{white}{\textbf{Target}} & 
+			\cellcolor{darkblue}\textcolor{white}{\textbf{Type}} \\
+			\hline
+			\textbf{user123} & canale\_1 & Reply \\
+			\hline
+			\textbf{user123} & canale\_2 & Reply\\
+			\hline
+			\textbf{user456} & canale\_3 & Reply\\
+		\end{tabular}
+		\caption{Esempio di file `archs.csv`.}
+		\label{tab:archs.csv}
+	\end{table}
+	\begin{table}
+		\begin{tabular}{|p{5cm}|p{4cm}|p{4cm}|}
+			\hline
+			\cellcolor{darkblue}\textcolor{white}{\textbf{Source}} & 
+			\cellcolor{darkblue}\textcolor{white}{\textbf{Target}} & 
+			\cellcolor{darkblue}\textcolor{white}{\textbf{Type}} \\
+			\hline
+			\textbf{user123} & canale\_1 & Reply \\
+			\hline
+			\textbf{user123} & canale\_2 & Reply\\
+			\hline
+			\textbf{user456} & canale\_3 & Reply\\
+			\hline
+			\textbf{canale\_1} & canale\_2 & Connection\\
+		\end{tabular}
+		\caption{Esempio di file `archs\_new.csv` con connessioni derivate.}
+		\label{tab:archs_new}
+	\end{table}
+	\newpage
+	\subsubsection{File closure.py}
+	In questa sezione verrà analizzato e descritto nel dettaglio il codice sviluppato per calcolare un indice denominato \textit{\textbf{"tasso di chiusura"}} per diverse community, andandosi a basare sulle interazioni tra utenti.
+	Iniziamo con il caricare i dati:
+	\begin{lstlisting}
+		df = pd.read_csv("archs_new_2.csv")
+		df = df[df.type == "Reply"]
+		df_community = pd.read_csv("community.csv")
+	\end{lstlisting}
+	\begin{itemize}[label=\ding{109}]
+		\item \textbf{archs\_new\_2.csv:} contiene informazioni sulle interazioni tra utenti, inclusi i tipi di messaggi inviati. Solo i messaggi di tipo "Reply" vengono considerati per le successive analisi.
+		\item \textbf{community.csv:} fornisce dettagli sulle community, come il numero di messaggi e attributi associati.
+	\end{itemize}
+	I file csv vengono caricati in due dataframe denominati \textbf{df} e \textbf{df\_community}.\\
+	Si prosegue, poi, con il calcolo degli utenti per canale:
+	\begin{lstlisting}
+		users_per_channel = df.groupby("target")["source"].apply(set).to_dict()
+	\end{lstlisting}
+	Questo passaggio raggruppa i dati in base ai canali destinatari \textbf{(target)} e crea un dizionario in cui ogni chiave rappresenta un canale, mentre il valore è l'insieme degli utenti \textbf{(source)}che hanno interagito con quel canale.\\
+	Si passa al calcolo dei canali per utente:
+	\begin{lstlisting}
+		channels_per_user = df.groupby("source")["target"].apply(set).to_dict()
+	\end{lstlisting}
+	In modo simile, questo codice calcola per ogni utente l'insieme dei canali \textbf{(target)} con cui ha interagito. Il risultato è un dizionario in cui la chiave è un utente e il valore è un insieme di canali.\\
+	Si calcola, poi, il tasso di chiusura:
+	\begin{lstlisting}
+		closure_scores = {}
+		for channel, users in users_per_channel.items():
+		total_channels = sum(len(channels_per_user[user]) for user in users)
+		closure_scores[channel] = len(users) / total_channels
+	\end{lstlisting}
+	Quest'ultimo si tratta di una metrica che quantifica la concentrazione degli utenti in un canale rispetto al numero totale di canali con cui interagiscono. Per ogni canale:
+	\begin{lstlisting}
+		closure_scores = {}
+		for channel, users in users_per_channel.items():
+		total_channels = sum(len(channels_per_user[user]) for user in users)
+		closure_scores[channel] = len(users) / total_channels
+	\end{lstlisting}
+	\begin{itemize}[label=\ding{109}]
+		\item Si somma il numero di canali associati a ciascun utente del canale corrente
+		\item Il tasso di chiusura è definito come il rapporto tra il numero di utenti unici del canale e il numero totale di canali con cui questi utenti interagiscono
+	\end{itemize}
+	Ultimo passo è l'integrazione del tasso di chiusura precedentemente calcolato:
+	\begin{lstlisting}
+		df_community["Tasso di chiusura"] = df_community["Community"].map(closure_scores)
+	\end{lstlisting}
+	I valori calcolati vengono mappati al DataFrame \textbf{df\_community}, aggiungendo una nuova colonna denominata "Tasso di chiusura".\\
+	Solo le community che hanno almeno 200 messaggi vengono considerate:
+	\begin{lstlisting}
+		df_community = df_community[df_community["Messaggi"] >= 200].dropna(subset=["Tasso di chiusura"])
+	\end{lstlisting}
+	I dati filtrati e arricchiti con il tasso di chiusura vengono salvati in un nuovo file csv denominato \textbf{community\_new.csv}.
+	\subsubsection{File community.py}
+	In questo paragrafo finale, si va ad analizzare in dettaglio il codice sviluppato per l'elaborazione e l'analisi dei dati delle community, esaminando ogni componente e la sua funzione specifica nel processo complessivo.\\
+	Il codice inizia con l'importazione delle librerie necessarie:
+	\begin{itemize}[label=\ding{109}]
+		\item\textbf{ pandas:} per la manipolazione dei dataframe.
+		\item \textbf{re:} per le operazioni con espressioni regolari.
+		\item \textbf{defaultdict:} per la gestione di dizionari con valori predefiniti.
+		\item \textbf{urlparse:} per l'analisi degli URL.
+		\item \textbf{numpy:} per operazioni numeriche efficienti
+	\end{itemize}
+	Il codice definisce anche alcuni pattern regex ottimizzati per il parsing degli URL e la pulizia del testo:
+	\begin{lstlisting}
+		URL_PATTERN = re.compile(r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+")
+		DOT_PATTERN = re.compile(r"\[(DOT|dot|\.)\]")
+		BRACKET_PATTERN = re.compile(r"\](?=\s|$)")
+	\end{lstlisting}
+	La funzione \textbf{preprocess\_newsguard\_data} si occupa di preparare i dati di Newsguard per l'analisi successiva:
+	\begin{lstlisting}
+		def preprocess_newsguard_data(newsguard_df):
+		clean_df = newsguard_df.dropna(subset=["Score"]).drop_duplicates()
+		
+		return {
+			'original_domains': {d.lower(): d for d in clean_df["Domain"] 
+				if isinstance(d, str)},
+			'orientations': {d.lower(): o for d, o in zip(clean_df["Domain"], clean_df["Orientation"]) 
+				if isinstance(d, str)},
+			'scores': {d.lower(): s for d, s in zip(clean_df["Domain"], clean_df["Score"])
+				if isinstance(d, str)},
+			'topics': {d.lower(): t for d, t in zip(clean_df["Domain"], clean_df["Topics"]) 
+				if isinstance(d, str)}
+		}
+	\end{lstlisting}
+	Questa funzione:
+	\begin{itemize}[label=\ding{109}]
+		\item Rimuove le righe con score mancanti e duplicati
+		\item Crea quattro dizionari normalizzati per domini, orientamenti, score e topic
+		\item Converte tutti i domini in minuscolo per garantire confronti case-insensitive
+		\item Filtra eventuali valori non stringa per evitare errori
+	\end{itemize}
+	Le funzioni \textbf{extract\_urls} e \textbf{extract\_domain} lavorano in tandem per processare gli URL nei messaggi:
+	\begin{lstlisting}
+		def extract_urls(text):
+		if not isinstance(text, str):
+		return []
+		cleaned = DOT_PATTERN.sub(".", text)
+		cleaned = BRACKET_PATTERN.sub("", cleaned)
+		return URL_PATTERN.findall(cleaned)
+		
+		def extract_domain(url):
+		try:
+		parsed = urlparse(url)
+		domain = parsed.netloc
+		return domain[4:].lower() if domain.startswith("www.") else domain.lower()
+		except:
+		return ""
+	\end{lstlisting}
+	Queste funzioni hanno gli scopi di:
+	\begin{itemize}[label=\ding{109}]
+		\item Normalizzano il testo sostituendo varianti di "dot" con punti
+		\item Estraggono tutti gli URL validi dal testo
+		\item Parsano gli URL per estrarre domini
+		\item Rimuovono il prefisso "www." e convertono in minuscolo
+	\end{itemize}
+	Il vero cuore dell'analisi è la funzione \textbf{process\_community\_stats}:
+	\begin{lstlisting}
+		def process_community_stats(df, newsguard_data):
+		community_stats = defaultdict(lambda: {"messaggi": 0, "views": 0, "forwards": 0, "domains": {}})
+		newsguard_domains = set(newsguard_data['original_domains'].keys())
+		
+		df['views'] = pd.to_numeric(df['views'], errors='coerce').fillna(0).astype(np.int32)
+		df['forwards'] = pd.to_numeric(df['forwards'], errors='coerce').fillna(0).astype(np.int32)
+		
+		for community, group in df.groupby('channelusername'):
+		valid_messages = group[group['message'].notna()]
+		
+		for _, row in valid_messages.iterrows():
+		urls = extract_urls(row['message'])
+		if not urls:
+		continue
+		
+		domains = {extract_domain(url) for url in urls}
+		matching_domains = domains & newsguard_domains
+		
+		if matching_domains:
+		stats = community_stats[community]
+		stats["messaggi"] += 1
+		stats["views"] += row['views']
+		stats["forwards"] += row['forwards']
+		
+		for domain in matching_domains:
+		if domain in community_stats[community]["domains"]:
+		community_stats[community]["domains"][domain] += 1
+		else:
+		community_stats[community]["domains"][domain] = 1
+		
+		return community_stats
+	\end{lstlisting}
+	Questa funzione:
+	\begin{itemize}[label=\ding{109}]
+		\item Inizializza un dizionario per memorizzare le statistiche delle community
+		\item Converte e pulisce i dati numerici (views e forwards)
+		\item Raggruppa i dati per community
+		\item Analizza ogni messaggio per estrarre e contare i domini
+		\item Aggiorna le statistiche per ogni dominio trovato che corrisponde ai dati Newsguard
+	\end{itemize}
+	Le funzioni \textbf{calculate\_topic\_percentages} e \textbf{calculate\_orientation\_percentages} elaborano le distribuzioni dei topic e degli orientamenti:
+	\begin{lstlisting}
+		def calculate_topic_percentages(domains, topics_data):
+		all_topics = []
+		for domain in domains:
+		topic_str = topics_data.get(domain, '')
+		if isinstance(topic_str, str):
+		topics = [t.strip() for t in topic_str.split(',') if t.strip()]
+		all_topics.extend(topics)
+		
+		if not all_topics:
+		return {}
+		
+		topic_counts = {}
+		total_topics = len(all_topics)
+		for topic in set(all_topics):
+		count = all_topics.count(topic)
+		topic_counts[topic] = (count / total_topics) * 100
+		
+		return dict(sorted(topic_counts.items(), key=lambda x: x[1], reverse=True))
+	\end{lstlisting}
+	Le due funzioni vanno a raccoglierei tutti i topic/orientamenti dai domini rilevanti, calcolano le percentuali di occorrenza ed ordinano i risultati in ordine decrescente.\\
+	La funzione \textbf{calculate\_community\_data} aggrega tutti i dati elaborati:
+	\begin{lstlisting}
+		def calculate_community_data(community_stats, newsguard_data):
+		community_data = []
+		
+		for community, stats in community_stats.items():
+		if not stats['domains']:
+		continue
+		
+		domains = stats['domains']
+		
+		topic_percentages = calculate_topic_percentages(domains, newsguard_data['topics'])
+		orientation_percentages = calculate_orientation_percentages(domains, newsguard_data['orientations'])
+		
+		valid_scores = [newsguard_data['scores'].get(domain) 
+		for domain in domains 
+		if domain in newsguard_data['scores']]
+		avg_score = sum(valid_scores) / len(valid_scores) if valid_scores else 0
+		
+		community_data.append({
+			"Community": community,
+			"Messaggi": stats["messaggi"],
+			"Views": stats["views"],
+			"Forwards": stats["forwards"],
+			"Score medio": avg_score,
+			"Top topic": max(topic_percentages.items(), key=lambda x: x[1])[0] if topic_percentages else '',
+			"Top domain": max(domains.items(), key=lambda x: x[1])[0],
+			"Orientamento percentuale": orientation_percentages,
+			"Topic percentuale": topic_percentages,
+			"Domini": domains,
+			"Frequent domains": dict(sorted(domains.items(), 
+			key=lambda x: x[1], 
+			reverse=True)[:5])
+		})
+		
+		return community_data
+	\end{lstlisting}
+	Questa funzione va ad elaborare i dati per ogni community, calcola statistiche aggregate come score medio e top topic; infine, organizza i dati in un formato strutturato per l'output finale.
+	\newpage
 	\section{Grafi}
 	\subsection{Creazione dei grafi}
+	Inizialmente, l'analisi era stata concepita per essere effettuata su grafi orientati, con l'obiettivo di sfruttare la direzionalità degli archi per rappresentare relazioni.\\
+	Tuttavia, durante lo sviluppo del lavoro, si sono presentate alcune limitazioni tecniche e metodologiche che hanno reso necessario spostare l'attenzione verso l'utilizzo di grafi non orientati, privilegiando una rappresentazione più semplice e simmetrica delle relazioni.\\ 
+	Per garantire una documentazione completa e trasparente, abbiamo comunque deciso di includere entrambe le versioni dell'analisi, offrendo un confronto tra i due approcci.
 	\subsubsection{Grafo orientato}
 	Il grafo riportato rappresenta una rete di utenti e comunità presenti su Telegram, modellata attraverso una struttura complessa di nodi e archi. \\Questa rappresentazione è stata ottenuta utilizzando il software Gephi, attraverso il caricamento dei dataset \textbf{node.csv} e \textbf{archs.csv}, contenenti rispettivamente le informazioni relative ai nodi (utenti o comunità) e agli archi (connessioni o interazioni tra i nodi). \\I nodi, visualizzati con colori distinti, identificano cluster di utenti che condividono connessioni più dense, suggerendo l'esistenza di comunità tematiche o gruppi coesi. \\Gli archi, che collegano i nodi, rappresentano le interazioni o le connessioni dirette tra i diversi utenti o gruppi, evidenziando la struttura globale della rete.\\
 	La distribuzione spaziale del grafo evidenzia una centralità maggiore in alcune aree, dove i nodi risultano più grandi e prominenti.\\ Questi possono essere interpretati come utenti o gruppi particolarmente influenti all'interno della rete, il cui ruolo potrebbe essere cruciale nella diffusione di informazioni o nel consolidamento di opinioni.\\ Al contrario, i nodi periferici, distanziati dal nucleo centrale, possono rappresentare utenti marginali o comunità meno integrate, contribuendo comunque alla diversità della rete complessiva.\\
