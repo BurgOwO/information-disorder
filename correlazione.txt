@@ -1,0 +1,4 @@
+Correlazione calcolata mediante il Coefficiente di Pearson
+
+Correlazione con chiusura matematica: 0.060985
+Correlazione con chiusura basata sui grafi: 0.056714

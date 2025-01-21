@@ -171,8 +171,7 @@ cython_debug/
 .pypirc
 
 # Other
-csv/
+data/
 open-measures-key.txt
 .DS_Store
 Newsguard.csv
-csv_old/
