@@ -1,32 +1,31 @@
 import networkx as nx
 import pandas as pd
  
-# Caricare il grafo da un file .graphml
+# Carica il grafo da un file .graphml
 graph = nx.read_graphml("project.graphml")
 print("Grafo caricato con successo. Numero di nodi:", graph.number_of_nodes(), "Numero di archi:", graph.number_of_edges())
  
-# Filtrare i nodi di tipo 'channel'
+# Filtra i nodi di tipo 'channel'
 channels = [node for node in graph.nodes if graph.nodes[node].get("type") == "Channel"]
 print(f"Numero di nodi di tipo 'channel': {len(channels)}")
  
-# Calcolare il grado (degree) senza ponderazione, come in Gephi
+# Calcolare il grado
 degree_dict = dict(graph.degree(channels))  # Degree semplice (senza pesi)
  
-# Calcolare la betweenness centrality con l'approccio di Brandes ottimizzato
+# Calcolare la betweenness centrality
 betweenness_dict = nx.betweenness_centrality(
     graph, 
     normalized=True, 
-    endpoints=False  # Gephi di default non usa gli estremi
+    endpoints=False 
 )
  
-# Calcolare la closeness centrality. NetworkX normalizza già come fa Gephi.
+# Calcolare la closeness centrality
 closeness_dict = nx.closeness_centrality(graph)
  
 # Calcolare la authority score usando l'algoritmo HITS
 if nx.is_directed(graph):
     _, authority_dict = nx.hits(graph, normalized=True)
 else:
-    # Gephi non calcola authority per grafi non diretti
     authority_dict = {node: 0 for node in graph.nodes}
  
 # Calcolare l'eigenvector centrality con iterazioni elevate e tolleranza bassa
