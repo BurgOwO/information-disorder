@@ -5,28 +5,30 @@
 \contentsline {section}{\numberline {2}Metodi e strumenti di lavoro}{5}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Glossario}{5}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Telegram}{7}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}NewsGuard}{8}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.3}NewsGuard}{7}{subsection.2.3}%
 \contentsline {subsection}{\numberline {2.4}Gephi}{8}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}Open Measures}{9}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.5}Open Measures}{8}{subsection.2.5}%
 \contentsline {section}{\numberline {3}Sviluppo del lavoro}{10}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Raccolta e pre-analisi dei dati}{10}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}File newsguard.csv}{10}{subsubsection.3.1.1}%
-\contentsline {subsubsection}{\numberline {3.1.2}File Open Measures.py}{11}{subsubsection.3.1.2}%
-\contentsline {subsubsection}{\numberline {3.1.3}File main.py}{12}{subsubsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.1}File Newsguard.csv}{10}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}File open measures.py}{11}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}File elaborazione.py}{12}{subsubsection.3.1.3}%
 \contentsline {subsubsection}{\numberline {3.1.4}File gephi.py}{15}{subsubsection.3.1.4}%
 \contentsline {subsubsection}{\numberline {3.1.5}File node.csv:}{16}{subsubsection.3.1.5}%
-\contentsline {subsubsection}{\numberline {3.1.6}File archs.csv:}{17}{subsubsection.3.1.6}%
-\contentsline {subsubsection}{\numberline {3.1.7}File connections.py}{17}{subsubsection.3.1.7}%
-\contentsline {subsubsection}{\numberline {3.1.8}File closure.py}{19}{subsubsection.3.1.8}%
-\contentsline {subsubsection}{\numberline {3.1.9}File community.py}{20}{subsubsection.3.1.9}%
-\contentsline {section}{\numberline {4}Grafi}{25}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Creazione dei grafi}{25}{subsection.4.1}%
-\contentsline {subsubsection}{\numberline {4.1.1}Grafo orientato}{25}{subsubsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.2}Grafo non orientato}{26}{subsubsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.2}Analisi dei grafi}{26}{subsection.4.2}%
-\contentsline {subsubsection}{\numberline {4.2.1}Analisi del grafo orientato}{26}{subsubsection.4.2.1}%
-\contentsline {subsubsection}{\numberline {4.2.2}Analisi del grafo non orientato}{31}{subsubsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.3}Analisi dei risultati}{31}{subsection.4.3}%
-\contentsline {section}{\numberline {5}Clustering}{31}{section.5}%
-\contentsline {section}{\numberline {6}Conclusione e valutazione finale del team}{31}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Sintesi dei risultati}{31}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {3.1.6}File archs.csv:}{18}{subsubsection.3.1.6}%
+\contentsline {subsubsection}{\numberline {3.1.7}File connections.py}{18}{subsubsection.3.1.7}%
+\contentsline {subsubsection}{\numberline {3.1.8}File community.py}{21}{subsubsection.3.1.8}%
+\contentsline {section}{\numberline {4}Grafi}{26}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Creazione dei grafi}{26}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Tentativi precedenti}{26}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Grafo finale}{32}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Grafo filtrato}{35}{subsubsection.4.1.3}%
+\contentsline {section}{\numberline {5}Clustering}{37}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Clustering grafo finale}{38}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Clustering grafo filtrato}{39}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Tasso di chiusura}{40}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Metodo basato sui grafi}{40}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Metodo matematico}{41}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Analisi dei risultati}{43}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Conclusione e valutazione finale del team}{44}{section.7}%
+\contentsline {section}{\numberline {8}Collegamenti esterni}{45}{section.8}%
