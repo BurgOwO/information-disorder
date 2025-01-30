@@ -95,6 +95,9 @@ def fetch_results(term, social, start_date, end_date, attempt_count=None):
 if __name__ == "__main__":
     social = "telegram".lower()
     terms = list(map(str.lower, terms))
+    
+    # Crea la cartella per i dati
+    os.makedirs("data", exist_ok=True)
 
     for term in terms:
         if not os.path.isfile(os.path.join("data", "%s_%s_2024.csv" % (social, term.replace(" ", "_")))):

@@ -175,3 +175,4 @@ data/
 open-measures-key.txt
 .DS_Store
 Newsguard.csv
+csv/output.csv

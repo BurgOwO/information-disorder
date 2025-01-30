@@ -6,7 +6,7 @@ df = df[df.type == "Reply"]
 df_community = pd.read_csv("csv/community.csv")
 df_closure_gephi = pd.read_csv("csv/chiusura_gephi.csv").dropna(subset=["Tasso di chiusura"])
 
-output_path = "csv/community_new.csv"
+output_path = "csv/community_chiusura.csv"
 txt_path = "correlazione.txt"
 
 # Calcolo degli utenti unici per ciascun canale

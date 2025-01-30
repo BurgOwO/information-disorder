@@ -110,6 +110,9 @@ def process_csvs(output_filename, occorrenze_filename, newsguard_filename="Newsg
         print("Nessun dominio con occorrenze trovato.\n")
 
 if __name__ == "__main__":
+    # Crea la cartella per i dati
+    os.makedirs("csv", exist_ok=True)
+
     output = "csv/output.csv"
     occorrenze = "csv/occorrenze.csv"
 
