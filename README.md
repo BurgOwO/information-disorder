@@ -55,5 +55,6 @@ Attraverso la raccolta di dati, l'utilizzo di valutazioni NewsGuard e la visuali
 ├── 📂 csv/             # CSV risultante dall'elaborazione dei dati
 ├── 📂 scripts/         # Script Python per raccolta e analisi dati
 ├── 📂 graphs/          # Grafi generati in Gephi
+├── 📂 istogrammi/      # Istogrammi di tutte le community analizzate
 ├── 📄 README.md        # Documentazione
 └── 📂 docs/            # Documentazione estesa e contesto storico
