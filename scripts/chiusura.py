@@ -3,10 +3,10 @@ import numpy as np
 
 df = pd.read_csv("csv/archs_new.csv", low_memory=False)
 df = df[df.type == "Reply"]
-df_community = pd.read_csv("csv/community.csv")
+df_community = pd.read_csv("csv/community_engagement.csv")
 df_closure_gephi = pd.read_csv("csv/chiusura_gephi.csv").dropna(subset=["Tasso di chiusura"])
 
-output_path = "csv/community_chiusura.csv"
+output_path = "csv/community_engagement_chiusura.csv"
 txt_path = "correlazione.txt"
 
 # Calcolo degli utenti unici per ciascun canale
@@ -33,16 +33,32 @@ df_community.drop(columns=["Id"], inplace=True)
 df_community = df_community[df_community["Messaggi"] >= 45].dropna(subset=["Tasso di chiusura"])
 # Salva il DataFrame in un file CSV
 df_community.to_csv(output_path, index=False)
-print("File %s salvato con successo." % output_path)
+print("\nFile %s salvato con successo." % output_path)
 
-correlazione_matematica = np.corrcoef(df_community["Score medio"], df_community["Tasso di chiusura"])[0, 1]
-correlazione_gephi = np.corrcoef(df_community["Score medio"], df_community["Chiusura Gephi"])[0, 1]
+correlazione_matematica_occorrenze = np.corrcoef(df_community["Score medio occorrenze"], df_community["Tasso di chiusura"])[0, 1]
+correlazione_gephi_occorrenze = np.corrcoef(df_community["Score medio occorrenze"], df_community["Chiusura Gephi"])[0, 1]
+correlazione_matematica_views = np.corrcoef(df_community["Score medio views"], df_community["Tasso di chiusura"])[0, 1]
+correlazione_gephi_views = np.corrcoef(df_community["Score medio views"], df_community["Chiusura Gephi"])[0, 1]
+correlazione_matematica_forwards = np.corrcoef(df_community["Score medio forwards"], df_community["Tasso di chiusura"])[0, 1]
+correlazione_gephi_forwards = np.corrcoef(df_community["Score medio forwards"], df_community["Chiusura Gephi"])[0, 1]
 
 with open(txt_path, 'w') as file:
-    file.write("Correlazione calcolata mediante il Coefficiente di Pearson\n\n")
-    file.write("Correlazione con chiusura matematica: %f\nCorrelazione con chiusura basata sui grafi: %f" % (correlazione_matematica, correlazione_gephi))
+    file.write("Correlazione sulle occorrenze calcolata mediante il Coefficiente di Pearson\n\n")
+    file.write("Correlazione con chiusura matematica: %f\nCorrelazione con chiusura basata sui grafi: %f" % (correlazione_matematica_occorrenze, correlazione_gephi_occorrenze))
+
+    file.write("\n\nCorrelazione sulle views calcolata mediante il Coefficiente di Pearson\n\n")
+    file.write("Correlazione con chiusura matematica: %f\nCorrelazione con chiusura basata sui grafi: %f" % (correlazione_matematica_views, correlazione_gephi_views))
+
+    file.write("\n\nCorrelazione sui forwards calcolata mediante il Coefficiente di Pearson\n\n")
+    file.write("Correlazione con chiusura matematica: %f\nCorrelazione con chiusura basata sui grafi: %f" % (correlazione_matematica_forwards, correlazione_gephi_forwards))
 
 print("File %s salvato con successo." % txt_path)
 
-print("\nCorrelazione calcolata mediante il Coefficiente di Pearson\n")
-print("Correlazione con chiusura matematica: %f\nCorrelazione con chiusura basata sui grafi: %f\n" % (correlazione_matematica, correlazione_gephi))
+print("\nCorrelazione sulle occorrenze calcolata mediante il Coefficiente di Pearson\n")
+print("Correlazione con chiusura matematica: %f\nCorrelazione con chiusura basata sui grafi: %f\n" % (correlazione_matematica_occorrenze, correlazione_gephi_occorrenze))
+
+print("\nCorrelazione sulle views calcolata mediante il Coefficiente di Pearson\n")
+print("Correlazione con chiusura matematica: %f\nCorrelazione con chiusura basata sui grafi: %f\n" % (correlazione_matematica_views, correlazione_gephi_views))
+
+print("\nCorrelazione sui forwards calcolata mediante il Coefficiente di Pearson\n")
+print("Correlazione con chiusura matematica: %f\nCorrelazione con chiusura basata sui grafi: %f\n" % (correlazione_matematica_forwards, correlazione_gephi_forwards))

@@ -1,4 +1,14 @@
-Correlazione calcolata mediante il Coefficiente di Pearson
+Correlazione sulle occorrenze calcolata mediante il Coefficiente di Pearson
 
 Correlazione con chiusura matematica: 0.060985
 Correlazione con chiusura basata sui grafi: 0.056714
+
+Correlazione sulle views calcolata mediante il Coefficiente di Pearson
+
+Correlazione con chiusura matematica: 0.067287
+Correlazione con chiusura basata sui grafi: 0.082552
+
+Correlazione sui forwards calcolata mediante il Coefficiente di Pearson
+
+Correlazione con chiusura matematica: 0.038577
+Correlazione con chiusura basata sui grafi: 0.077848
